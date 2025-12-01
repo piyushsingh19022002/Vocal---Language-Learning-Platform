@@ -8,11 +8,16 @@ const vocabularySchema = new mongoose.Schema({
   },
   translation: {
     type: String,
-    required: true,
+    default: '',
   },
   language: {
     type: String,
     required: true,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null,
   },
   unit: {
     type: String,

@@ -143,5 +143,11 @@
   color: #6366f1;
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.3s;
+}
+
+.signup-link a:hover {
+  color: #4f46e5;
+  text-decoration: underline;
 }
 

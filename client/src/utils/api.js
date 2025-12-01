@@ -41,6 +41,14 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
+export const loginWithGoogle = async (tokenId, userInfo = null) => {
+  const response = await api.post('/auth/google', { tokenId, userInfo });
+  if (response.data.token) {
+    localStorage.setItem('token', response.data.token);
+  }
+  return response.data;
+};
+
 // Courses API
 export const getCourses = async () => {
   const response = await api.get('/courses');
@@ -72,6 +80,51 @@ export const getVocabulary = async (filters = {}) => {
 
 export const getVocabularyWord = async (id) => {
   const response = await api.get(`/vocabulary/${id}`);
+  return response.data;
+};
+
+export const createVocabulary = async (vocabularyData) => {
+  const response = await api.post('/vocabulary', vocabularyData);
+  return response.data;
+};
+
+export const createVocabularyBulk = async (words, language = 'French') => {
+  const response = await api.post('/vocabulary/bulk', { words, language });
+  return response.data;
+};
+
+export const parseSentence = async (sentence, language = 'French') => {
+  const response = await api.post('/vocabulary/parse-sentence', { sentence, language });
+  return response.data;
+};
+
+export const updateVocabulary = async (id, updates) => {
+  const response = await api.put(`/vocabulary/${id}`, updates);
+  return response.data;
+};
+
+export const deleteVocabulary = async (id) => {
+  const response = await api.delete(`/vocabulary/${id}`);
+  return response.data;
+};
+
+export const deleteVocabularyBulk = async (ids) => {
+  const response = await api.delete('/vocabulary', { data: { ids } });
+  return response.data;
+};
+
+export const searchVocabulary = async (query, language) => {
+  const params = new URLSearchParams({ q: query });
+  if (language) params.append('language', language);
+  const response = await api.get(`/vocabulary/search?${params}`);
+  return response.data;
+};
+
+export const getVocabularyStats = async (language, userId) => {
+  const params = new URLSearchParams();
+  if (language) params.append('language', language);
+  if (userId) params.append('userId', userId);
+  const response = await api.get(`/vocabulary/stats/summary?${params}`);
   return response.data;
 };
 

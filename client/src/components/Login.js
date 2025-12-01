@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { login, register } from '../utils/api';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { login, register, loginWithGoogle } from '../utils/api';
 import './Login.css';
 
 const Login = ({ isLogin = true }) => {
@@ -11,7 +11,115 @@ const Login = ({ isLogin = true }) => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Load Google Identity Services
+  useEffect(() => {
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+    
+    if (!clientId) {
+      console.warn('Google Client ID is not configured. Google sign-in will not work.');
+      return;
+    }
+
+    // Load Google Identity Services script
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      if (window.google && window.google.accounts) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: (response) => {
+            handleGoogleSignIn(response);
+          },
+        });
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup
+      const existingScript = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (existingScript && existingScript.parentNode) {
+        existingScript.parentNode.removeChild(existingScript);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGoogleSignIn = async (response) => {
+    try {
+      setGoogleLoading(true);
+      setError('');
+      
+      // If response has credential (ID token flow)
+      if (response.credential) {
+        await loginWithGoogle(response.credential);
+        navigate('/dashboard');
+        window.location.reload();
+      }
+      // Otherwise, userInfo is handled in handleGoogleClick
+    } catch (err) {
+      console.error('Google sign in error:', err);
+      setError(err.response?.data?.message || 'Google sign in failed. Please try again.');
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleClick = () => {
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+    
+    if (!clientId) {
+      setError('Google Client ID is not configured. Please check GOOGLE_SETUP.md for instructions.');
+      return;
+    }
+
+    if (!window.google || !window.google.accounts) {
+      setError('Google sign in is loading. Please wait a moment and try again.');
+      return;
+    }
+
+    try {
+      // Use Google's One Tap or popup flow
+      window.google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'email profile',
+        callback: async (tokenResponse) => {
+          if (tokenResponse.error) {
+            setError('Google sign in failed: ' + tokenResponse.error);
+            return;
+          }
+          
+          // Get user info using the access token
+          try {
+            const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+              headers: {
+                Authorization: `Bearer ${tokenResponse.access_token}`
+              }
+            });
+            const userInfo = await userInfoResponse.json();
+            
+            // Send user info directly to backend
+            setGoogleLoading(true);
+            setError('');
+            await loginWithGoogle(null, userInfo);
+            navigate('/dashboard');
+            window.location.reload(); // Refresh to update user state
+          } catch (err) {
+            console.error('Error fetching user info:', err);
+            setError('Failed to get user information from Google.');
+            setGoogleLoading(false);
+          }
+        },
+      }).requestAccessToken();
+    } catch (error) {
+      console.error('Error triggering Google sign-in:', error);
+      setError('Failed to start Google sign-in. Please try again.');
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -102,17 +210,22 @@ const Login = ({ isLogin = true }) => {
             {loading ? 'Loading...' : 'Continue'}
           </button>
 
-          <button type="button" className="btn-google">
+          <button 
+            type="button" 
+            className="btn-google" 
+            onClick={handleGoogleClick}
+            disabled={googleLoading || loading}
+          >
             <span className="google-icon">G</span>
-            Continue with Google
+            {googleLoading ? 'Signing in...' : 'Continue with Google'}
           </button>
         </form>
 
         <p className="signup-link">
           {isLogin ? "Don't have an account? " : 'Already have an account? '}
-          <a href={isLogin ? '/signup' : '/login'}>
-            {isLogin ? 'Signup' : 'Login'}
-          </a>
+          <Link to={isLogin ? '/signup' : '/login'}>
+            {isLogin ? 'Sign Up' : 'Login'}
+          </Link>
         </p>
       </div>
     </div>

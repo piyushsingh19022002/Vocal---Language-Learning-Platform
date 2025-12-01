@@ -136,39 +136,237 @@
 
 .vocabulary-content {
   padding: 1rem;
-  text-align: center;
+  text-align: left;
+}
+
+.vocabulary-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
 }
 
 .vocabulary-word {
   font-size: 1.25rem;
   font-weight: bold;
   color: #1a202c;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  flex: 1;
+}
+
+.delete-button {
+  background: #fc8181;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+.delete-button:hover {
+  background: #f56565;
+  transform: scale(1.1);
 }
 
 .vocabulary-translation {
   color: #718096;
   font-size: 0.875rem;
   margin-bottom: 0.75rem;
+  min-height: 1.2rem;
+}
+
+.vocabulary-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+}
+
+.pronounce-button {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.pronounce-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+}
+
+.pronounce-button:active {
+  transform: scale(0.95);
 }
 
 .audio-button {
   background: #6366f1;
   color: white;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  font-size: 1.25rem;
+  font-size: 1rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.2s;
+  flex-shrink: 0;
 }
 
 .audio-button:hover {
   transform: scale(1.1);
+}
+
+.difficulty-select {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+  color: #4a5568;
+  transition: border-color 0.3s;
+}
+
+.difficulty-select:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.practice-button {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  height: 36px;
+  border-radius: 18px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+  white-space: nowrap;
+  padding: 0 0.75rem;
+  min-width: 36px;
+  width: auto;
+}
+
+.practice-button:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.4);
+}
+
+.practice-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.practice-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.practice-button.listening {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6);
+  }
+}
+
+.recognition-feedback {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recognition-feedback.correct {
+  background: #d1fae5;
+  border: 1px solid #10b981;
+  color: #065f46;
+}
+
+.recognition-feedback.close {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+}
+
+.recognition-feedback.incorrect {
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+}
+
+.recognition-feedback.error {
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+}
+
+.feedback-message {
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.feedback-details {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  color: inherit;
+  opacity: 0.9;
+}
+
+.feedback-details strong {
+  font-weight: 600;
+}
+
+.feedback-similarity {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  font-weight: 500;
 }
 
 .no-results {

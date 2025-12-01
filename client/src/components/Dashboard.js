@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getCurrentUser, getCourses } from '../utils/api';
 import './Dashboard.css';
 
@@ -62,11 +63,11 @@ const Dashboard = () => {
               <h3>Listening Practice</h3>
               <p>New audio drills available</p>
             </div>
-            <div className="feature-card">
+            <Link to="/vocabulary" className="feature-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="feature-icon">📚</div>
               <h3>Vocabulary</h3>
-              <p>12 new words to review</p>
-            </div>
+              <p>Build your vocabulary list</p>
+            </Link>
             <div className="feature-card">
               <div className="feature-icon">📊</div>
               <h3>Your Progress</h3>
