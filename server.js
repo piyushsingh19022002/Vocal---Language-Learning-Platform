@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
 
 // Database connection
 const connectDB = require('./config/db');
@@ -21,6 +22,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/courses', require('./routes/courses'));
 app.use('/api/lessons', require('./routes/lessons'));
 app.use('/api/vocabulary', require('./routes/vocabulary'));
+app.use('/api/listening', require('./routes/listening'));
+app.use('/api/translate', require('./routes/translate'));
 
 // Health check
 app.get('/api/health', (req, res) => {

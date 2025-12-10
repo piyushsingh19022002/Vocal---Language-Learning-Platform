@@ -5,6 +5,9 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import DashboardPage from './pages/DashboardPage';
 import VocabularyPage from './pages/VocabularyPage';
+import ListeningPractice from './pages/ListeningPractice';
+import LessonView from './components/listening/LessonView';
+import LanguageSelector from './components/LanguageSelector';
 
 function App() {
   return (
@@ -15,6 +18,9 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/vocabulary" element={<VocabularyPage />} />
+        <Route path="/listening" element={<LanguageSelector />} />
+        <Route path="/listening-practice" element={<ListeningPractice />} />
+        <Route path="/listening-practice/:id" element={<LessonView />} />
       </Routes>
     </Router>
   );

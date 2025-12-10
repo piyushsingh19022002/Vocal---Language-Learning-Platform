@@ -58,11 +58,15 @@ const Dashboard = () => {
               <h3>Speaking Practice</h3>
               <p>Daily goal: 5/10 mins</p>
             </div>
-            <div className="feature-card">
+            <Link
+              to="/listening"
+              className="feature-card"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
               <div className="feature-icon">🎧</div>
               <h3>Listening Practice</h3>
               <p>New audio drills available</p>
-            </div>
+            </Link>
             <Link to="/vocabulary" className="feature-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="feature-icon">📚</div>
               <h3>Vocabulary</h3>
