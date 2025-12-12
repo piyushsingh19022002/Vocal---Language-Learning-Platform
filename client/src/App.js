@@ -8,6 +8,7 @@ import VocabularyPage from './pages/VocabularyPage';
 import ListeningPractice from './pages/ListeningPractice';
 import LessonView from './components/listening/LessonView';
 import LanguageSelector from './components/LanguageSelector';
+import Contact from './pages/Contact';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/listening" element={<LanguageSelector />} />
         <Route path="/listening-practice" element={<ListeningPractice />} />
         <Route path="/listening-practice/:id" element={<LessonView />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </Router>
   );

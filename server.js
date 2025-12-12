@@ -24,6 +24,7 @@ app.use('/api/lessons', require('./routes/lessons'));
 app.use('/api/vocabulary', require('./routes/vocabulary'));
 app.use('/api/listening', require('./routes/listening'));
 app.use('/api/translate', require('./routes/translate'));
+app.use('/api/contact', require('./routes/contact'));
 
 // Health check
 app.get('/api/health', (req, res) => {
