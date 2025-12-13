@@ -10,6 +10,7 @@ import LessonView from './components/listening/LessonView';
 import LanguageSelector from './components/LanguageSelector';
 import Contact from './pages/Contact';
 import About from './pages/About';
+import CoursesPage from './pages/CoursesPage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/listening-practice/:id" element={<LessonView />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
+        <Route path="/courses" element={<CoursesPage />} />
       </Routes>
     </Router>
   );

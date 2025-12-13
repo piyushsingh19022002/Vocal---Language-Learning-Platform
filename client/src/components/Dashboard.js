@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCurrentUser, getCourses } from '../utils/api';
+import CourseCard from './CourseCard';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -100,14 +101,11 @@ const Dashboard = () => {
         <div className="courses-section">
           <h2 className="section-title">Available Courses</h2>
           <div className="courses-grid">
-            {courses.map((course) => (
-              <div key={course._id} className="course-card">
-                <div className="course-flag">{course.language}</div>
-                <h3>{course.name}</h3>
-                <p>{course.description}</p>
-                <button className="btn-learn-more">Learn More</button>
-              </div>
-            ))}
+            {courses
+              .filter(course => course.status !== 'draft')
+              .map((course) => (
+                <CourseCard key={course._id} course={course} />
+              ))}
           </div>
         </div>
       </div>

@@ -74,7 +74,7 @@ const Header = () => {
         </Link>
         <nav className="nav">
           <Link to="/" className="nav-link">Home</Link>
-          <Link to="/" className="nav-link">Courses</Link>
+          <Link to="/courses" className="nav-link">Courses</Link>
           <Link to="/about" className="nav-link">About</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
           {token && (
