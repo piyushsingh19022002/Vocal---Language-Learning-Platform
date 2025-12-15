@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 6,
   },
-<<<<<<< HEAD
   googleId: {
     type: String,
     unique: true,
@@ -38,7 +37,6 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
-=======
   lastScore: {
     type: Number,
     default:0
@@ -65,7 +63,6 @@ const userSchema = new mongoose.Schema({
     default:null
   },
 
->>>>>>> speaking-feature-add
   enrolledCourses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course',

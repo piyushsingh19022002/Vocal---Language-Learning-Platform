@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { getCurrentUser, getCourses } from '../utils/api';
 import CourseCard from './CourseCard';
 import './Dashboard.css';
-import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
