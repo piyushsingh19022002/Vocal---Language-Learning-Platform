@@ -28,6 +28,7 @@ const Login = ({ isLogin = true }) => {
     try {
       if (isLogin) {
         await login({ email: formData.email, password: formData.password });
+        
       } else {
         await register(formData);
       }
