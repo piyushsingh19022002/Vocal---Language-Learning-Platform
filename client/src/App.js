@@ -10,6 +10,7 @@ import ListeningPractice from './pages/ListeningPractice';
 import LessonView from './components/listening/LessonView';
 import LanguageSelector from './components/LanguageSelector';
 import Contact from './pages/Contact';
+import About from './pages/About';
 
 import Speaking from './components/SpeakingPractice';
 import GlobalProvider from './levels/globalfile';
@@ -42,7 +43,11 @@ function App() {
 
 
         <Route path="/contact" element={<Contact />} />
+
          contactUs
+
+        <Route path="/about" element={<About />} />
+
       </Routes>
     </Router>
   );
