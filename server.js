@@ -22,6 +22,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/courses', require('./routes/courses'));
 app.use('/api/lessons', require('./routes/lessons'));
 app.use('/api/vocabulary', require('./routes/vocabulary'));
+app.use('/api/progress', require('./routes/progress'));
 
 app.use('/api/question',require('./utils/question'));
 app.use('/api/save',require('./utils/scoreDB'));

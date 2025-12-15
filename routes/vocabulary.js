@@ -3,6 +3,7 @@ const Vocabulary = require('../models/Vocabulary');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { protect } = require('../middleware/auth');
+const { updateUserProgress } = require('./progress');
 
 const router = express.Router();
 
@@ -187,6 +188,11 @@ router.post('/', async (req, res) => {
       unit: req.body.unit || '',
       category: req.body.category || 'user-added'
     });
+
+    // If word is created as "Learned", update user progress
+    if (vocabulary.difficulty === 'Learned' && userId) {
+      await updateUserProgress(userId, vocabulary.language);
+    }
     
     res.status(201).json(vocabulary);
   } catch (error) {
@@ -219,6 +225,20 @@ router.post('/bulk', protect, async (req, res) => {
     }));
 
     const created = await Vocabulary.insertMany(vocabularyItems);
+    
+    // Update progress if any words were created as "Learned"
+    const targetUserId = userId || req.user?._id;
+    if (targetUserId) {
+      const learnedWords = created.filter(w => w.difficulty === 'Learned');
+      if (learnedWords.length > 0) {
+        // Get unique languages from learned words
+        const languages = [...new Set(learnedWords.map(w => w.language))];
+        for (const lang of languages) {
+          await updateUserProgress(targetUserId, lang);
+        }
+      }
+    }
+    
     res.status(201).json({ 
       message: `Successfully added ${created.length} words`,
       vocabulary: created 
@@ -255,6 +275,9 @@ router.post('/parse-sentence', async (req, res) => {
 // @access  Private
 router.put('/:id', protect, async (req, res) => {
   try {
+    // Get the original vocabulary to check if difficulty changed
+    const originalVocabulary = await Vocabulary.findById(req.params.id);
+    
     const vocabulary = await Vocabulary.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -263,6 +286,15 @@ router.put('/:id', protect, async (req, res) => {
     if (!vocabulary) {
       return res.status(404).json({ message: 'Vocabulary not found' });
     }
+
+    // If difficulty changed to/from "Learned", update user progress
+    if (originalVocabulary && 
+        (originalVocabulary.difficulty !== vocabulary.difficulty) &&
+        (vocabulary.difficulty === 'Learned' || originalVocabulary.difficulty === 'Learned') &&
+        vocabulary.userId) {
+      await updateUserProgress(vocabulary.userId, vocabulary.language);
+    }
+
     res.json(vocabulary);
   } catch (error) {
     res.status(500).json({ message: error.message });

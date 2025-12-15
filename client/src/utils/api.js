@@ -175,9 +175,43 @@ export const getVocabularyStats = async (language, userId) => {
   return response.data;
 };
 
+<<<<<<< HEAD
 // Contact API
 export const submitContactForm = async (contactData) => {
   const response = await api.post('/contact', contactData);
+=======
+// Progress API
+export const getProgress = async (language, userId) => {
+  const params = new URLSearchParams();
+  if (language) params.append('language', language);
+  if (userId) params.append('userId', userId);
+  const response = await api.get(`/progress?${params}`);
+  return response.data;
+};
+
+export const getLanguageProgress = async (language, userId) => {
+  const params = new URLSearchParams();
+  if (userId) params.append('userId', userId);
+  const response = await api.get(`/progress/${language}?${params}`);
+  return response.data;
+};
+
+export const getUserProgress = async (userId) => {
+  const response = await api.get(`/progress/user/${userId}`);
+  return response.data;
+};
+
+export const updateProgress = async (language = 'French') => {
+  const response = await api.post('/progress/update', { language });
+  return response.data;
+};
+
+export const getProgressSummary = async (language, userId) => {
+  const params = new URLSearchParams();
+  if (language) params.append('language', language);
+  if (userId) params.append('userId', userId);
+  const response = await api.get(`/progress/stats/summary?${params}`);
+>>>>>>> your_progress
   return response.data;
 };
 
