@@ -14,6 +14,7 @@ import CoursesPage from './pages/CoursesPage';
 import Speaking from './components/SpeakingPractice';
 import GlobalProvider from './levels/globalfile';
 import Level1 from './levels/level1';
+import VerifyOTPPage from './pages/VerifyOTPPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/verify-otp" element={<VerifyOTPPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/vocabulary" element={<VocabularyPage />} />
         <Route path="/listening" element={<LanguageSelector />} />
