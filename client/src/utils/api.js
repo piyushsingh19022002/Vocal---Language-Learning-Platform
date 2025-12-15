@@ -1,9 +1,11 @@
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
+
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 // Create axios instance
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -19,7 +21,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Auth API
+// Auth API 
 export const register = async (userData) => {
   const response = await api.post('/auth/register', userData);
   if (response.data.token) {
@@ -27,9 +29,17 @@ export const register = async (userData) => {
   }
   return response.data;
 };
+export const question=async(data)=>{
+  console.log(data);
+  
+  const response=await api.post('/question/fetchanswer',data);
+  console.log(response);
+  return response.data;
+}
 
 export const login = async (userData) => {
   const response = await api.post('/auth/login', userData);
+  localStorage.setItem('email',userData);
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
   }
@@ -82,6 +92,22 @@ export const getVocabularyWord = async (id) => {
   const response = await api.get(`/vocabulary/${id}`);
   return response.data;
 };
+export const saveScoreData=async(finalScore)=>{
+
+  try{
+    const token=localStorage.getItem("token");
+    const decode=jwtDecode(token);
+    console.log(decode);
+  const res=await api.post("/save/score",{
+    score:finalScore,
+    id:decode.id,
+  });
+  console.log("Saved: ",res.data);
+  }
+  catch(err){
+    console.log("Error Saving score: ",err);
+  }
+}
 
 export const createVocabulary = async (vocabularyData) => {
   const response = await api.post('/vocabulary', vocabularyData);

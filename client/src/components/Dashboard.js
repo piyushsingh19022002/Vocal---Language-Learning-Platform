@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCurrentUser, getCourses } from '../utils/api';
 import './Dashboard.css';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -53,11 +54,13 @@ const Dashboard = () => {
         <div className="dashboard-section">
           <h2 className="section-title">Your Learning Dashboard</h2>
           <div className="feature-cards">
+            <Link to={"/dashboard/speaking"}>
             <div className="feature-card">
               <div className="feature-icon">📢</div>
               <h3>Speaking Practice</h3>
               <p>Daily goal: 5/10 mins</p>
             </div>
+            </Link>
             <div className="feature-card">
               <div className="feature-icon">🎧</div>
               <h3>Listening Practice</h3>
