@@ -11,6 +11,9 @@ import LanguageSelector from './components/LanguageSelector';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import CoursesPage from './pages/CoursesPage';
+import Speaking from './components/SpeakingPractice';
+import GlobalProvider from './levels/globalfile';
+import Level1 from './levels/level1';
 
 function App() {
   return (
@@ -27,6 +30,11 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/dashboard/speaking" element={<Speaking/>}></Route>
+        <Route path="/audio" element={<GlobalProvider/>}></Route>
+
+
+        <Route path="/dashboard/speaking/level/:id" element={<Level1></Level1>}></Route>
       </Routes>
     </Router>
   );

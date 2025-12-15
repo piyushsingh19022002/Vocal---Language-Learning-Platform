@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getCurrentUser, getCourses } from '../utils/api';
 import CourseCard from './CourseCard';
 import './Dashboard.css';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -54,6 +55,7 @@ const Dashboard = () => {
         <div className="dashboard-section">
           <h2 className="section-title">Your Learning Dashboard</h2>
           <div className="feature-cards">
+            <Link to={"/dashboard/speaking"}>
             <div className="feature-card">
               <div className="feature-icon">📢</div>
               <h3>Speaking Practice</h3>
@@ -64,9 +66,12 @@ const Dashboard = () => {
               className="feature-card"
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
+            </Link>
+            <div className="feature-card">
               <div className="feature-icon">🎧</div>
               <h3>Listening Practice</h3>
               <p>New audio drills available</p>
+            </div>
             </Link>
             <Link to="/vocabulary" className="feature-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="feature-icon">📚</div>

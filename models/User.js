@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 6,
   },
+<<<<<<< HEAD
   googleId: {
     type: String,
     unique: true,
@@ -37,6 +38,34 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
+=======
+  lastScore: {
+    type: Number,
+    default:0
+  },
+  bestScore:{
+    type: Number,
+    default:0
+  },
+  scoreHistory:[{
+    score: Number,
+    date:{type:Date,default: Date.now}
+  }
+  ],
+  currentStreak:{
+    type:Number,
+    default:0
+  },
+  longestStreak:{
+    type:Number,
+    default:0
+  },
+  lastActiveDate:{
+    type:Date,
+    default:null
+  },
+
+>>>>>>> speaking-feature-add
   enrolledCourses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course',
