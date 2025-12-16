@@ -198,11 +198,19 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    // Block users that were disabled by admin
+    if (user.isBlocked) {
+      return res.status(403).json({
+        message: 'Your account has been blocked by an administrator',
+      });
+    }
+
     if (user.password && (await user.matchPassword(password))) {
       return res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         token: generateToken(user._id),
       });
     }

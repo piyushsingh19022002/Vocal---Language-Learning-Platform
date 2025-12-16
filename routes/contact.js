@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const ContactMessage = require('../models/ContactMessage');
 const { sendEmail } = require('../utils/sendEmail');
 
 /**
@@ -125,15 +126,23 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Log the contact form submission (for debugging)
-    console.log('=== CONTACT FORM SUBMISSION ===');
-    console.log('Name:', trimmedName);
-    console.log('Email:', trimmedEmail);
-    console.log('Subject:', trimmedSubject);
-    console.log('Category:', trimmedCategory || 'Not specified');
-    console.log('Message Length:', trimmedMessage.length, 'characters');
-    console.log('Timestamp:', new Date().toISOString());
-    console.log('================================');
+    // Persist contact message for admin panel
+    let savedMessage;
+    try {
+      savedMessage = await ContactMessage.create({
+        name: trimmedName,
+        email: trimmedEmail,
+        subject: trimmedSubject,
+        category: trimmedCategory,
+        message: trimmedMessage,
+      });
+    } catch (dbError) {
+      console.error('❌ Failed to save contact message:', dbError);
+      return res.status(500).json({
+        message: 'Failed to save your message. Please try again later.',
+        success: false,
+      });
+    }
 
     // Check if email service is configured
     const adminEmail = process.env.EMAIL_USER;

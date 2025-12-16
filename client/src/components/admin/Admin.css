@@ -1,0 +1,68 @@
+/* Admin shared styles */
+
+.admin-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 14px;
+}
+
+.admin-table th {
+  background: #f5f3ff;
+  color: #5b21b6;
+  font-weight: 600;
+}
+
+.admin-table tr:hover {
+  background: #faf5ff;
+}
+
+.admin-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.admin-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.admin-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.admin-actions button {
+  background: transparent;
+  border: none;
+  color: #6d28d9;
+  cursor: pointer;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.admin-actions button:hover {
+  text-decoration: underline;
+}

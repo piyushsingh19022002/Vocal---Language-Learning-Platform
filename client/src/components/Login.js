@@ -47,7 +47,6 @@ const Login = ({ isLogin = true }) => {
         existingScript.parentNode.removeChild(existingScript);
       }
     };
-
   }, []);
 
   const handleGoogleSignIn = async (response) => {
