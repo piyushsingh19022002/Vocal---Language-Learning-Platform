@@ -145,7 +145,7 @@ const Home = () => {
                   <div className="step-icon">{step.icon}</div>
                   <h3 className="step-title">{step.title}</h3>
                   <p className="step-description">{step.description}</p>
-                </div>
+              </div>
               ))}
             </div>
           </div>
@@ -177,13 +177,13 @@ const Home = () => {
                   <div className="comparison-traditional">
                     <span className="comparison-icon">{item.icon}</span>
                     <span className="comparison-text">{item.traditional}</span>
-                  </div>
+              </div>
                   <div className="comparison-arrow">→</div>
                   <div className="comparison-vocal">
                     <span className="comparison-check">✅</span>
                     <span className="comparison-text">{item.vocal}</span>
-                  </div>
-                </div>
+              </div>
+              </div>
               ))}
             </div>
           </div>

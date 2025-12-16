@@ -105,7 +105,7 @@ const Dashboard = () => {
               .filter(course => course.status !== 'draft')
               .map((course) => (
                 <CourseCard key={course._id} course={course} />
-              ))}
+            ))}
           </div>
         </div>
       </div>
