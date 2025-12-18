@@ -8,10 +8,14 @@ import DashboardPage from './pages/DashboardPage';
 import VocabularyPage from './pages/VocabularyPage';
 
 import ListeningPractice from './pages/ListeningPractice';
+import ListeningHub from './pages/ListeningHub';
 import LessonView from './components/listening/LessonView';
 import LanguageSelector from './components/LanguageSelector';
 import Contact from './pages/Contact';
 import About from './pages/About';
+import CoursesPage from './pages/CoursesPage';
+import VerifyOTPPage from './pages/VerifyOTPPage';
+import AdminPage from './pages/admin/AdminPage';
 
 import Speaking from './components/SpeakingPractice';
 import GlobalProvider from './levels/globalfile';
@@ -28,9 +32,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/verify-otp" element={<VerifyOTPPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
 
         <Route path="/vocabulary" element={<VocabularyPage />} />
+
 
 
 
@@ -42,6 +48,9 @@ function App() {
 
 
         <Route path="/listening" element={<LanguageSelector />} />
+
+        <Route path="/listening" element={<ListeningHub />} />
+
         <Route path="/listening-practice" element={<ListeningPractice />} />
         <Route path="/listening-practice/:id" element={<LessonView />} />
 
@@ -54,7 +63,12 @@ function App() {
         <Route path="/about" element={<About />} />
 
 
+
         <Route path="/course/:id" element={<CourseDetailPage />} />
+
+
+        <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/admin/*" element={<AdminPage />} />
 
       </Routes>
     </Router>

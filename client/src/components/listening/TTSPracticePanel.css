@@ -1,0 +1,264 @@
+.tts-practice-panel {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tts-practice-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.tts-header {
+  margin-bottom: 1.5rem;
+}
+
+.tts-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+}
+
+.tts-subtitle {
+  font-size: 0.9375rem;
+  color: #718096;
+  margin: 0;
+}
+
+.tts-input-section {
+  margin-bottom: 1.5rem;
+}
+
+.tts-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #f7fafc;
+  resize: vertical;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.tts-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.tts-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.tts-speak-btn {
+  padding: 0.875rem 1.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tts-speak-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+}
+
+.tts-speak-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tts-save-btn {
+  padding: 0.875rem 1.5rem;
+  background: white;
+  border: 2px solid #667eea;
+  color: #667eea;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tts-save-btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.tts-speed-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 12px;
+}
+
+.tts-speed-controls label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9375rem;
+}
+
+.speed-btn {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #4a5568;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.speed-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.speed-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.tts-error {
+  color: #dc2626;
+  font-size: 0.9375rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #fee2e2;
+  border-radius: 8px;
+}
+
+.played-text-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.played-text-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.header-text {
+  font-weight: 700;
+  color: #1a202c;
+  font-size: 1rem;
+}
+
+.header-lang {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.played-text-content {
+  line-height: 1.8;
+  font-size: 1rem;
+  color: #1a202c;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.clickable-word {
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.clickable-word:hover {
+  background: #e0e7ff;
+  color: #667eea;
+}
+
+.clickable-word.active {
+  background: #667eea;
+  color: white;
+}
+
+.saved-practices-section {
+  margin-top: 2rem;
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.saved-practices-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 1rem 0;
+}
+
+.saved-practices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.saved-practice-item {
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saved-practice-item:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.saved-practice-text {
+  color: #1a202c;
+  font-size: 0.9375rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.saved-practice-meta {
+  font-size: 0.8125rem;
+  color: #718096;
+}
+
+@media (max-width: 768px) {
+  .tts-practice-card {
+    padding: 1.5rem;
+  }
+
+  .tts-controls {
+    flex-direction: column;
+  }
+
+  .tts-speak-btn,
+  .tts-save-btn {
+    width: 100%;
+  }
+}
+

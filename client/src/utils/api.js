@@ -24,9 +24,7 @@ api.interceptors.request.use((config) => {
 // Auth API 
 export const register = async (userData) => {
   const response = await api.post('/auth/register', userData);
-  if (response.data.token) {
-    localStorage.setItem('token', response.data.token);
-  }
+  // OTP verification - no token returned, user needs to verify first
   return response.data;
 };
 export const question=async(data)=>{
@@ -56,6 +54,86 @@ export const loginWithGoogle = async (tokenId, userInfo = null) => {
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
   }
+  return response.data;
+};
+
+// OTP Verification API
+export const verifyOTP = async (email, otp) => {
+  const response = await api.post('/auth/verify-otp', { email, otp });
+  if (response.data.token) {
+    localStorage.setItem('token', response.data.token);
+  }
+  return response.data;
+};
+
+export const resendOTP = async (email) => {
+  const response = await api.post('/auth/resend-otp', { email });
+  return response.data;
+};
+
+// Admin API
+export const getAdminSummary = async () => {
+  const response = await api.get('/admin/summary');
+  return response.data;
+};
+
+export const getAdminUsers = async () => {
+  const response = await api.get('/admin/users');
+  return response.data;
+};
+
+export const setUserBlocked = async (userId, blocked) => {
+  const response = await api.patch(`/admin/users/${userId}/block`, { blocked });
+  return response.data;
+};
+
+export const deleteUser = async (userId) => {
+  const response = await api.delete(`/admin/users/${userId}`);
+  return response.data;
+};
+
+export const getAdminCourses = async () => {
+  const response = await api.get('/admin/courses');
+  return response.data;
+};
+
+export const createAdminCourse = async (courseData) => {
+  const response = await api.post('/admin/courses', courseData);
+  return response.data;
+};
+
+export const updateAdminCourse = async (courseId, updates) => {
+  const response = await api.put(`/admin/courses/${courseId}`, updates);
+  return response.data;
+};
+
+export const deleteAdminCourse = async (courseId) => {
+  const response = await api.delete(`/admin/courses/${courseId}`);
+  return response.data;
+};
+
+export const getAdminListeningLessons = async () => {
+  const response = await api.get('/admin/listening-lessons');
+  return response.data;
+};
+
+export const deleteAdminListeningLesson = async (lessonId) => {
+  const response = await api.delete(`/admin/listening-lessons/${lessonId}`);
+  return response.data;
+};
+
+export const getAdminContactMessages = async () => {
+  const response = await api.get('/admin/contact-messages');
+  return response.data;
+};
+
+export const getAdminContactMessage = async (id) => {
+  const response = await api.get(`/admin/contact-messages/${id}`);
+  return response.data;
+};
+
+export const markContactMessageRead = async (id) => {
+  const response = await api.patch(`/admin/contact-messages/${id}/read`);
   return response.data;
 };
 

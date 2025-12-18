@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'; // Ensure React is used in JSX
 import { Link } from 'react-router-dom';
+
 import { getCurrentUser, getCourses, getProgress } from '../utils/api';
+import CourseCard from './CourseCard';
+
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -108,14 +111,14 @@ const Dashboard = () => {
               <p>Build your vocabulary list</p>
             </Link>
 
-{/* 
+            {/* 
             <div className="feature-card">
               <div className="feature-icon">📊</div>
               <h3>Your Progress</h3>
               <p>Overall fluency: {fluency}%</p>
             </div>  */}
 
-            <div 
+            <div
               className={`feature-card progress-card ${isProgressExpanded ? 'expanded' : ''}`}
               onClick={() => setIsProgressExpanded(!isProgressExpanded)}
               style={{ cursor: 'pointer', position: 'relative' }}
@@ -123,7 +126,7 @@ const Dashboard = () => {
               <div className="progress-card-header">
                 <div className="feature-icon">📊</div>
                 <h3>Your Progress</h3>
-                <button 
+                <button
                   className="expand-toggle"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -133,7 +136,7 @@ const Dashboard = () => {
                   {isProgressExpanded ? '▼' : '▶'}
                 </button>
               </div>
-              
+
               {/* Summary View (Always Visible) */}
               <div className="progress-summary">
                 <p>Vocabulary: {learnedWords}/{totalWords} words</p>
@@ -159,12 +162,12 @@ const Dashboard = () => {
                       <div className="stat-label">Progress</div>
                     </div>
                   </div>
-                  
+
                   <div className="progress-bar-wrapper">
                     <div className="progress-bar-label">Overall Progress</div>
                     <div className="progress-bar-container-stats">
-                      <div 
-                        className="progress-bar-fill" 
+                      <div
+                        className="progress-bar-fill"
                         style={{ width: `${progress.progressPercentage || 0}%` }}
                       ></div>
                     </div>
@@ -183,8 +186,8 @@ const Dashboard = () => {
                             <span className="language-percentage">{langProgress.progress}%</span>
                           </div>
                           <div className="progress-bar-container-stats small">
-                            <div 
-                              className="progress-bar-fill" 
+                            <div
+                              className="progress-bar-fill"
                               style={{ width: `${langProgress.progress}%` }}
                             ></div>
                           </div>
@@ -199,8 +202,8 @@ const Dashboard = () => {
                   {(!progress.byLanguage || Object.keys(progress.byLanguage).length === 0) && (
                     <div className="no-progress-data">
                       <p>Start learning to see your progress!</p>
-                      <Link 
-                        to="/vocabulary" 
+                      <Link
+                        to="/vocabulary"
                         className="btn-start-learning"
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -210,8 +213,8 @@ const Dashboard = () => {
                   )}
 
                   <div className="progress-card-footer">
-                    <Link 
-                      to="/vocabulary" 
+                    <Link
+                      to="/vocabulary"
                       className="btn-view-vocabulary-inline"
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -258,9 +261,10 @@ const Dashboard = () => {
         <div className="courses-section">
           <h2 className="section-title">Available Courses</h2>
           <div className="courses-grid">
+
             {courses.map((course) => (
-              <div 
-                key={course._id} 
+              <div
+                key={course._id}
                 className={`course-card ${expandedCourseId === course._id ? 'expanded' : ''}`}
               >
                 <div className="course-card-header">
@@ -269,7 +273,7 @@ const Dashboard = () => {
                     <h3>{course.name}</h3>
                     <p className="course-level-badge">{course.level}</p>
                   </div>
-                  <button 
+                  <button
                     className="course-expand-toggle"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -279,9 +283,9 @@ const Dashboard = () => {
                     {expandedCourseId === course._id ? '▼' : '▶'}
                   </button>
                 </div>
-                
+
                 <p className="course-description-short">{course.description}</p>
-                
+
                 {expandedCourseId === course._id && course.lessons && (
                   <div className="course-lessons-preview">
                     <h4>Lessons ({course.lessons.length})</h4>
@@ -298,7 +302,7 @@ const Dashboard = () => {
                         </div>
                       )}
                     </div>
-                    <Link 
+                    <Link
                       to={`/course/${course._id}`}
                       className="btn-view-course"
                       style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}
@@ -307,9 +311,9 @@ const Dashboard = () => {
                     </Link>
                   </div>
                 )}
-                
+
                 {expandedCourseId !== course._id && (
-                  <Link 
+                  <Link
                     to={`/course/${course._id}`}
                     className="btn-learn-more"
                     style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}
@@ -318,6 +322,7 @@ const Dashboard = () => {
                   </Link>
                 )}
               </div>
+
             ))}
           </div>
         </div>

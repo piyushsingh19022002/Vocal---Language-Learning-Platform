@@ -37,28 +37,28 @@ const userSchema = new mongoose.Schema({
 
   lastScore: {
     type: Number,
-    default:0
+    default: 0
   },
-  bestScore:{
+  bestScore: {
     type: Number,
-    default:0
+    default: 0
   },
-  scoreHistory:[{
+  scoreHistory: [{
     score: Number,
-    date:{type:Date,default: Date.now}
+    date: { type: Date, default: Date.now }
   }
   ],
-  currentStreak:{
-    type:Number,
-    default:0
+  currentStreak: {
+    type: Number,
+    default: 0
   },
-  longestStreak:{
-    type:Number,
-    default:0
+  longestStreak: {
+    type: Number,
+    default: 0
   },
-  lastActiveDate:{
-    type:Date,
-    default:null
+  lastActiveDate: {
+    type: Date,
+    default: null
   },
 
 
@@ -68,7 +68,10 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
-
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
   enrolledCourses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course',
@@ -84,6 +87,19 @@ const userSchema = new mongoose.Schema({
   practiceTime: {
     type: Number,
     default: 0, // in minutes
+  },
+  // Email verification fields
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  otp: {
+    type: String,
+    default: null,
+  },
+  otpExpires: {
+    type: Date,
+    default: null,
   },
 }, {
   timestamps: true,
