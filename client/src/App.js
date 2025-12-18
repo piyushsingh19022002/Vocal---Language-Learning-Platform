@@ -27,6 +27,8 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/verify-otp" element={<VerifyOTPPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/speaking" element={<Speaking />} />
+        <Route path="/dashboard/speaking/level/:id" element={<Level1 />} />
         <Route path="/vocabulary" element={<VocabularyPage />} />
         <Route path="/listening" element={<ListeningHub />} />
         <Route path="/listening-practice" element={<ListeningPractice />} />
