@@ -112,6 +112,22 @@ export const deleteAdminCourse = async (courseId) => {
   return response.data;
 };
 
+// Admin Course Access Management
+export const assignCourseToUser = async (userId, courseId) => {
+  const response = await api.post('/admin/assign-course', { userId, courseId });
+  return response.data;
+};
+
+export const revokeCourseFromUser = async (userId, courseId) => {
+  const response = await api.post('/admin/revoke-course', { userId, courseId });
+  return response.data;
+};
+
+export const getUserCourses = async (userId) => {
+  const response = await api.get(`/admin/users/${userId}/courses`);
+  return response.data;
+};
+
 export const getAdminListeningLessons = async () => {
   const response = await api.get('/admin/listening-lessons');
   return response.data;

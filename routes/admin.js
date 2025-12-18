@@ -57,6 +57,46 @@ router.get('/users', async (req, res) => {
   }
 });
 
+// @route   GET /api/admin/users/:userId/courses
+// @desc    Get user's enrolled courses
+// @access  Private/Admin
+router.get('/users/:userId/courses', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    
+    // DEBUG LOG
+    console.log('ADMIN COURSES API HIT - userId:', userId);
+    console.log('Request path:', req.path);
+    console.log('Request params:', req.params);
+    
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const user = await User.findById(userId)
+      .select('enrolledCourses')
+      .populate('enrolledCourses');
+
+    if (!user) {
+      console.log('User not found for ID:', userId);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.log('User found, enrolled courses count:', user.enrolledCourses?.length || 0);
+    
+    res.json({
+      userId: user._id,
+      enrolledCourses: user.enrolledCourses || [],
+    });
+  } catch (error) {
+    console.error('Admin get user courses error:', error);
+    res.status(500).json({ 
+      message: 'Failed to load user courses',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
 // @route   PATCH /api/admin/users/:id/block
 // @desc    Block or unblock a user
 // @access  Private/Admin
@@ -214,6 +254,105 @@ router.delete('/listening-lessons/:id', async (req, res) => {
   } catch (error) {
     console.error('Admin delete listening lesson error:', error);
     res.status(500).json({ message: 'Failed to delete listening lesson' });
+  }
+});
+
+// =========================
+// Course Access Management
+// =========================
+
+// @route   POST /api/admin/assign-course
+// @desc    Assign a course to a user
+// @access  Private/Admin
+router.post('/assign-course', async (req, res) => {
+  try {
+    const { userId, courseId } = req.body;
+
+    if (!userId || !courseId) {
+      return res.status(400).json({ message: 'userId and courseId are required' });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify course exists
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    // Check if already enrolled (avoid duplicates)
+    const isAlreadyEnrolled = user.enrolledCourses.some(
+      (id) => id.toString() === courseId.toString()
+    );
+
+    if (isAlreadyEnrolled) {
+      return res.status(400).json({ message: 'User is already enrolled in this course' });
+    }
+
+    // Add course to user's enrolledCourses
+    user.enrolledCourses.push(courseId);
+    await user.save();
+
+    // Populate enrolledCourses for response
+    await user.populate('enrolledCourses');
+
+    res.json({
+      message: 'Course assigned successfully',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        enrolledCourses: user.enrolledCourses,
+      },
+    });
+  } catch (error) {
+    console.error('Admin assign course error:', error);
+    res.status(500).json({ message: 'Failed to assign course' });
+  }
+});
+
+// @route   POST /api/admin/revoke-course
+// @desc    Revoke course access from a user
+// @access  Private/Admin
+router.post('/revoke-course', async (req, res) => {
+  try {
+    const { userId, courseId } = req.body;
+
+    if (!userId || !courseId) {
+      return res.status(400).json({ message: 'userId and courseId are required' });
+    }
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Remove course from user's enrolledCourses
+    user.enrolledCourses = user.enrolledCourses.filter(
+      (id) => id.toString() !== courseId.toString()
+    );
+    await user.save();
+
+    // Populate enrolledCourses for response
+    await user.populate('enrolledCourses');
+
+    res.json({
+      message: 'Course access revoked successfully',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        enrolledCourses: user.enrolledCourses,
+      },
+    });
+  } catch (error) {
+    console.error('Admin revoke course error:', error);
+    res.status(500).json({ message: 'Failed to revoke course access' });
   }
 });
 
