@@ -19,9 +19,7 @@ import Level1 from './levels/level1';
 import VerifyOTPPage from './pages/VerifyOTPPage';
 import AdminPage from './pages/admin/AdminPage';
 
-import Speaking from './components/SpeakingPractice';
-import GlobalProvider from './levels/globalfile';
-import Level1 from './levels/level1';
+
 
 
 import CourseDetailPage from './pages/CourseDetailPage';

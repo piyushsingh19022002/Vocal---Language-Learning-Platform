@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'; // Ensure React is used in J
 import { Link } from 'react-router-dom';
 
 import { getCurrentUser, getCourses, getProgress } from '../utils/api';
-import CourseCard from './CourseCard';
+import DashboardSkeleton from './dashboard/DashboardSkeleton';
 
 import './Dashboard.css';
 

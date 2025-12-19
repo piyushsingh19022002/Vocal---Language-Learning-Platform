@@ -18,10 +18,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 6,
   },
-<<<<<<< HEAD
-=======
-
->>>>>>> 024e0bba242e7a0a7e7869dda7e760a425b14e59
   googleId: {
     type: String,
     unique: true,
