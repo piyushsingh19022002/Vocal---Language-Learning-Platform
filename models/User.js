@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 6,
   },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 024e0bba242e7a0a7e7869dda7e760a425b14e59
   googleId: {
     type: String,
     unique: true,
@@ -32,6 +36,36 @@ const userSchema = new mongoose.Schema({
     enum: ['local', 'google'],
     default: 'local',
   },
+
+
+  lastScore: {
+    type: Number,
+    default: 0
+  },
+  bestScore: {
+    type: Number,
+    default: 0
+  },
+  scoreHistory: [{
+    score: Number,
+    date: { type: Date, default: Date.now }
+  }
+  ],
+  currentStreak: {
+    type: Number,
+    default: 0
+  },
+  longestStreak: {
+    type: Number,
+    default: 0
+  },
+  lastActiveDate: {
+    type: Date,
+    default: null
+  },
+
+
+
   role: {
     type: String,
     enum: ['user', 'admin'],

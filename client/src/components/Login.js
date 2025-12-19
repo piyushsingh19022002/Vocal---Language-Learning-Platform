@@ -47,6 +47,11 @@ const Login = ({ isLogin = true }) => {
         existingScript.parentNode.removeChild(existingScript);
       }
     };
+
+
+
+
+
   }, []);
 
   const handleGoogleSignIn = async (response) => {
@@ -135,8 +140,11 @@ const Login = ({ isLogin = true }) => {
     try {
       if (isLogin) {
         await login({ email: formData.email, password: formData.password });
+
         
+
         navigate('/dashboard');
+
       } else {
         // Registration - redirect to OTP verification
         const response = await register(formData);

@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import DashboardPage from './pages/DashboardPage';
 import VocabularyPage from './pages/VocabularyPage';
+
 import ListeningPractice from './pages/ListeningPractice';
 import ListeningHub from './pages/ListeningHub';
 import LessonView from './components/listening/LessonView';
@@ -18,6 +19,14 @@ import Level1 from './levels/level1';
 import VerifyOTPPage from './pages/VerifyOTPPage';
 import AdminPage from './pages/admin/AdminPage';
 
+import Speaking from './components/SpeakingPractice';
+import GlobalProvider from './levels/globalfile';
+import Level1 from './levels/level1';
+
+
+import CourseDetailPage from './pages/CourseDetailPage';
+
+
 function App() {
   return (
     <Router>
@@ -27,14 +36,39 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/verify-otp" element={<VerifyOTPPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/dashboard/speaking" element={<Speaking />} />
-        <Route path="/dashboard/speaking/level/:id" element={<Level1 />} />
+
         <Route path="/vocabulary" element={<VocabularyPage />} />
+
+
+
+
+        <Route path="/dashboard/speaking" element={<Speaking/>}></Route>
+        <Route path="/audio" element={<GlobalProvider/>}></Route>
+
+
+        <Route path="/dashboard/speaking/level/:id" element={<Level1></Level1>}></Route>
+
+
+        <Route path="/listening" element={<LanguageSelector />} />
+
         <Route path="/listening" element={<ListeningHub />} />
+
         <Route path="/listening-practice" element={<ListeningPractice />} />
         <Route path="/listening-practice/:id" element={<LessonView />} />
+
+
+
         <Route path="/contact" element={<Contact />} />
+
+         contactUs
+
         <Route path="/about" element={<About />} />
+
+
+
+        <Route path="/course/:id" element={<CourseDetailPage />} />
+
+
         <Route path="/courses" element={<CoursesPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
