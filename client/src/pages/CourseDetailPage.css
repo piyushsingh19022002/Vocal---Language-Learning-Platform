@@ -374,7 +374,6 @@
   color: #718096;
 }
 
-.loading,
 .error {
   text-align: center;
   padding: 3rem;
@@ -616,4 +615,3 @@
     gap: 0.5rem;
   }
 }
-

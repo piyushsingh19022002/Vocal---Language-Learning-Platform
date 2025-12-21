@@ -303,7 +303,8 @@ const Dashboard = () => {
                       )}
                     </div>
                     <Link
-                      to={`/course/${course._id}`}
+                      state={{ from: 'dashboard' }}
+                      to={`/courses/${course._id}`}
                       className="btn-view-course"
                       style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}
                     >
@@ -314,7 +315,8 @@ const Dashboard = () => {
 
                 {expandedCourseId !== course._id && (
                   <Link
-                    to={`/course/${course._id}`}
+                    state={{ from: 'dashboard' }}
+                      to={`/courses/${course._id}`}
                     className="btn-learn-more"
                     style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}
                   >

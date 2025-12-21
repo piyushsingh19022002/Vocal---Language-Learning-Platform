@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './CourseCard.css';
 
 /**
@@ -26,6 +26,9 @@ const CourseCard = ({
   progress = 0,
   isEnrolled = false 
 }) => {
+  const location = useLocation();
+  const from = location.pathname.includes('/dashboard') ? 'dashboard' : 'courses';
+
   // Don't render draft courses for public
   if (course.status === 'draft') {
     return null;
@@ -199,6 +202,7 @@ const CourseCard = ({
         ) : (
           <Link 
             to={`/courses/${course._id}`} 
+            state={{ from }}
             className="btn-course btn-primary"
             onClick={handleCourseClick}
           >

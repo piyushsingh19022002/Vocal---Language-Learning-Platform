@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { getCourse, getLessons } from '../utils/api';
+import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
 import './CourseDetailPage.css';
 
 const ActionButtons = ({ text, onListen, onTranslate, onAi }) => (
@@ -104,11 +105,23 @@ const CourseDetailPage = () => {
     setAiModal((prev) => ({ ...prev, result: response, loading: false, error: '' }));
   }, []);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (from === 'dashboard') {
+      navigate('/dashboard');
+    } else {
+      navigate('/courses');
+    }
+  };
+
   if (loading) {
     return (
       <div>
         <Header />
-        <div className="loading">Loading course...</div>
+        <DashboardSkeleton />
       </div>
     );
   }
@@ -126,7 +139,13 @@ const CourseDetailPage = () => {
     <div className="course-detail-page">
       <Header />
       <div className="course-detail-container">
-        <Link to="/dashboard" className="back-link">← Back to Dashboard</Link>
+        <button 
+          onClick={handleBack} 
+          className="back-link" 
+          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', padding: 0 }}
+        >
+          ← Back
+        </button>
         
         <div className="course-header">
           <div className="course-icon">{course.image || '📚'}</div>

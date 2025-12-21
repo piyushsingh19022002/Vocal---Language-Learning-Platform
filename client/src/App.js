@@ -23,6 +23,7 @@ import AdminPage from './pages/admin/AdminPage';
 
 
 import CourseDetailPage from './pages/CourseDetailPage';
+import NotFound from './pages/NotFound';
 
 
 function App() {
@@ -64,11 +65,12 @@ function App() {
 
 
 
-        <Route path="/course/:id" element={<CourseDetailPage />} />
+        <Route path="/courses/:id" element={<CourseDetailPage />} />
 
 
         <Route path="/courses" element={<CoursesPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
