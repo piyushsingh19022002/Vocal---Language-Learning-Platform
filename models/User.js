@@ -32,10 +32,44 @@ const userSchema = new mongoose.Schema({
     enum: ['local', 'google'],
     default: 'local',
   },
+
+
+  lastScore: {
+    type: Number,
+    default: 0
+  },
+  bestScore: {
+    type: Number,
+    default: 0
+  },
+  scoreHistory: [{
+    score: Number,
+    date: { type: Date, default: Date.now }
+  }
+  ],
+  currentStreak: {
+    type: Number,
+    default: 0
+  },
+  longestStreak: {
+    type: Number,
+    default: 0
+  },
+  lastActiveDate: {
+    type: Date,
+    default: null
+  },
+
+
+
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user',
+  },
+  isBlocked: {
+    type: Boolean,
+    default: false,
   },
   enrolledCourses: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -52,6 +86,55 @@ const userSchema = new mongoose.Schema({
   practiceTime: {
     type: Number,
     default: 0, // in minutes
+  },
+  // Gamification system
+  gamification: {
+    level: {
+      type: Number,
+      default: 1
+    },
+    xp: {
+      type: Number,
+      default: 0
+    },
+    totalXP: {
+      type: Number,
+      default: 0
+    },
+    achievements: [{
+      id: String,
+      name: String,
+      unlockedAt: {
+        type: Date,
+        default: Date.now
+      },
+      progress: {
+        type: Number,
+        default: 0
+      }
+    }],
+    streaks: {
+      current: {
+        type: Number,
+        default: 0
+      },
+      longest: {
+        type: Number,
+        default: 0
+      },
+      lastActivityDate: Date
+    },
+    dailyGoals: {
+      target: {
+        type: Number,
+        default: 5
+      },
+      completed: {
+        type: Number,
+        default: 0
+      },
+      lastResetDate: Date
+    }
   },
   // Email verification fields
   isVerified: {

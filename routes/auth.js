@@ -92,8 +92,8 @@ router.post('/register', async (req, res) => {
     // Check if user exists with Google account
     const existingGoogleUser = await User.findOne({ email, authProvider: 'google' });
     if (existingGoogleUser) {
-      return res.status(400).json({ 
-        message: 'This email is already registered with Google. Please sign in with Google.' 
+      return res.status(400).json({
+        message: 'This email is already registered with Google. Please sign in with Google.'
       });
     }
 
@@ -106,7 +106,7 @@ router.post('/register', async (req, res) => {
         userExists.otp = otp;
         userExists.otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
         await userExists.save();
-        
+
         try {
           await sendOTPEmail(userExists.email, userExists.name, otp);
           return res.status(200).json({
@@ -115,8 +115,8 @@ router.post('/register', async (req, res) => {
           });
         } catch (emailError) {
           console.error('Failed to send OTP email:', emailError);
-          return res.status(500).json({ 
-            message: 'Failed to send OTP email. Please try again later.' 
+          return res.status(500).json({
+            message: 'Failed to send OTP email. Please try again later.'
           });
         }
       }
@@ -151,29 +151,29 @@ router.post('/register', async (req, res) => {
       console.error('Failed to send OTP email:', emailError);
       // Roll back user creation so no inactive/undeliverable account is left behind
       await User.findByIdAndDelete(user._id);
-      return res.status(500).json({ 
-        message: 'Registration failed: could not send verification email. Please try again later.' 
+      return res.status(500).json({
+        message: 'Registration failed: could not send verification email. Please try again later.'
       });
     }
   } catch (error) {
     console.error('Registration error:', error);
-    
+
     // Handle duplicate key errors
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0];
-      return res.status(400).json({ 
-        message: `${field === 'email' ? 'Email' : 'Username'} already exists` 
+      return res.status(400).json({
+        message: `${field === 'email' ? 'Email' : 'Username'} already exists`
       });
     }
-    
+
     // Handle validation errors
     if (error.name === 'ValidationError') {
       const messages = Object.values(error.errors).map(err => err.message);
       return res.status(400).json({ message: messages.join(', ') });
     }
-    
-    res.status(500).json({ 
-      message: error.message || 'Server error. Please try again later.' 
+
+    res.status(500).json({
+      message: error.message || 'Server error. Please try again later.'
     });
   }
 });
@@ -193,8 +193,15 @@ router.post('/login', async (req, res) => {
 
     // Block unverified local users before checking password
     if (user.authProvider === 'local' && !user.isVerified) {
-      return res.status(403).json({ 
-        message: 'Please verify your email first' 
+      return res.status(403).json({
+        message: 'Please verify your email first'
+      });
+    }
+
+    // Block users that were disabled by admin
+    if (user.isBlocked) {
+      return res.status(403).json({
+        message: 'Your account has been blocked by an administrator',
       });
     }
 
@@ -203,6 +210,7 @@ router.post('/login', async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         token: generateToken(user._id),
       });
     }
@@ -257,7 +265,7 @@ router.post('/google', async (req, res) => {
     }
 
     // Check if user exists
-    let user = await User.findOne({ 
+    let user = await User.findOne({
       $or: [
         { email },
         { googleId }
@@ -275,7 +283,7 @@ router.post('/google', async (req, res) => {
     } else {
       // Create new user (Google users are auto-verified)
       user = await User.create({
-        name: name || email.split('@')[0],
+        name: (name && name.trim()) || email.split('@')[0] || 'User',
         email,
         googleId,
         avatar: picture || '',
@@ -294,8 +302,13 @@ router.post('/google', async (req, res) => {
     });
   } catch (error) {
     console.error('Google auth error:', error);
-    res.status(500).json({ 
-      message: error.message || 'Google authentication failed' 
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    res.status(500).json({
+      message: error.message || 'Google authentication failed'
     });
   }
 });
@@ -319,15 +332,15 @@ router.post('/verify-otp', async (req, res) => {
 
     // Check if already verified
     if (user.isVerified) {
-      return res.status(400).json({ 
-        message: 'Email is already verified. You can login now.' 
+      return res.status(400).json({
+        message: 'Email is already verified. You can login now.'
       });
     }
 
     // Check if OTP exists
     if (!user.otp) {
-      return res.status(400).json({ 
-        message: 'No OTP found. Please request a new OTP.' 
+      return res.status(400).json({
+        message: 'No OTP found. Please request a new OTP.'
       });
     }
 
@@ -338,8 +351,8 @@ router.post('/verify-otp', async (req, res) => {
 
     // Check if OTP is expired
     if (user.otpExpires && new Date() > user.otpExpires) {
-      return res.status(400).json({ 
-        message: 'OTP has expired. Please request a new OTP.' 
+      return res.status(400).json({
+        message: 'OTP has expired. Please request a new OTP.'
       });
     }
 
@@ -361,8 +374,8 @@ router.post('/verify-otp', async (req, res) => {
     });
   } catch (error) {
     console.error('OTP verification error:', error);
-    res.status(500).json({ 
-      message: error.message || 'Server error. Please try again later.' 
+    res.status(500).json({
+      message: error.message || 'Server error. Please try again later.'
     });
   }
 });
@@ -386,8 +399,8 @@ router.post('/resend-otp', async (req, res) => {
 
     // Check if already verified
     if (user.isVerified) {
-      return res.status(400).json({ 
-        message: 'Email is already verified. You can login now.' 
+      return res.status(400).json({
+        message: 'Email is already verified. You can login now.'
       });
     }
 
@@ -406,14 +419,14 @@ router.post('/resend-otp', async (req, res) => {
       });
     } catch (emailError) {
       console.error('Failed to send OTP email:', emailError);
-      res.status(500).json({ 
-        message: 'Failed to send OTP email. Please try again later.' 
+      res.status(500).json({
+        message: 'Failed to send OTP email. Please try again later.'
       });
     }
   } catch (error) {
     console.error('Resend OTP error:', error);
-    res.status(500).json({ 
-      message: error.message || 'Server error. Please try again later.' 
+    res.status(500).json({
+      message: error.message || 'Server error. Please try again later.'
     });
   }
 });
@@ -431,6 +444,7 @@ router.get('/me', protect, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 module.exports = router;
 

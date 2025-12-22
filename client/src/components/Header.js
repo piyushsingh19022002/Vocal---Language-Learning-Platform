@@ -78,7 +78,12 @@ const Header = () => {
           <Link to="/about" className="nav-link">About</Link>
           <Link to="/contact" className="nav-link">Contact</Link>
           {token && (
-            <Link to="/dashboard" className="nav-link">Dashboard</Link>
+            <>
+              <Link to="/dashboard" className="nav-link">Dashboard</Link>
+              {user && user.role === 'admin' && (
+                <Link to="/admin" className="nav-link">Admin</Link>
+              )}
+            </>
           )}
         </nav>
         {token && !loading && user ? (
@@ -105,6 +110,16 @@ const Header = () => {
                   <span className="dropdown-icon">📊</span>
                   Dashboard
                 </Link>
+                {user && user.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="dropdown-item"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    <span className="dropdown-icon">🛠</span>
+                    Admin Panel
+                  </Link>
+                )}
                 <button
                   className="dropdown-item dropdown-item-logout"
                   onClick={handleLogout}

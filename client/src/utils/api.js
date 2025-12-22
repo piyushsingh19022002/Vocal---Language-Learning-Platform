@@ -1,9 +1,11 @@
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
+
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 // Create axios instance
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -19,15 +21,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Auth API
+// Auth API 
 export const register = async (userData) => {
   const response = await api.post('/auth/register', userData);
   // OTP verification - no token returned, user needs to verify first
   return response.data;
 };
+export const question = async (data) => {
+  console.log(data);
+
+  const response = await api.post('/question/fetchanswer', data);
+  console.log(response);
+  return response.data;
+}
 
 export const login = async (userData) => {
   const response = await api.post('/auth/login', userData);
+  localStorage.setItem('email', userData);
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
   }
@@ -39,8 +49,8 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
-export const loginWithGoogle = async (tokenId, userInfo = null) => {
-  const response = await api.post('/auth/google', { tokenId, userInfo });
+export const loginWithGoogle = async (credential) => {
+  const response = await api.post('/auth/google', { tokenId: credential });
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
   }
@@ -58,6 +68,108 @@ export const verifyOTP = async (email, otp) => {
 
 export const resendOTP = async (email) => {
   const response = await api.post('/auth/resend-otp', { email });
+  return response.data;
+};
+
+// Admin API
+export const getAdminSummary = async () => {
+  const response = await api.get('/admin/summary');
+  return response.data;
+};
+
+export const getAdminUsers = async () => {
+  const response = await api.get('/admin/users');
+  return response.data;
+};
+
+export const setUserBlocked = async (userId, blocked) => {
+  const response = await api.patch(`/admin/users/${userId}/block`, { blocked });
+  return response.data;
+};
+
+export const deleteUser = async (userId) => {
+  const response = await api.delete(`/admin/users/${userId}`);
+  return response.data;
+};
+
+export const getAdminCourses = async () => {
+  const response = await api.get('/admin/courses');
+  return response.data;
+};
+
+export const createAdminCourse = async (courseData) => {
+  const response = await api.post('/admin/courses', courseData);
+  return response.data;
+};
+
+export const updateAdminCourse = async (courseId, updates) => {
+  const response = await api.put(`/admin/courses/${courseId}`, updates);
+  return response.data;
+};
+
+export const deleteAdminCourse = async (courseId) => {
+  const response = await api.delete(`/admin/courses/${courseId}`);
+  return response.data;
+};
+
+export const getUserCourses = async (userId) => {
+  const response = await api.get(`/admin/users/${userId}/courses`);
+  return response.data;
+};
+
+export const assignCourseToUser = async (userId, courseId) => {
+  const response = await api.post('/admin/assign-course', { userId, courseId });
+  return response.data;
+};
+
+export const revokeCourseFromUser = async (userId, courseId) => {
+  const response = await api.post('/admin/revoke-course', { userId, courseId });
+  return response.data;
+};
+
+// Lesson APIs
+export const getLessonsByCourse = async (courseId) => {
+  const response = await api.get(`/lessons?courseId=${courseId}`);
+  return response.data;
+};
+
+export const createLesson = async (lessonData) => {
+  const response = await api.post('/lessons', lessonData);
+  return response.data;
+};
+
+export const updateLesson = async (lessonId, updates) => {
+  const response = await api.put(`/lessons/${lessonId}`, updates);
+  return response.data;
+};
+
+export const deleteLesson = async (lessonId) => {
+  const response = await api.delete(`/lessons/${lessonId}`);
+  return response.data;
+};
+
+export const getAdminListeningLessons = async () => {
+  const response = await api.get('/admin/listening-lessons');
+  return response.data;
+};
+
+export const deleteAdminListeningLesson = async (lessonId) => {
+  const response = await api.delete(`/admin/listening-lessons/${lessonId}`);
+  return response.data;
+};
+
+export const getAdminContactMessages = async () => {
+  const response = await api.get('/admin/contact-messages');
+  return response.data;
+};
+
+export const getAdminContactMessage = async (id) => {
+  const response = await api.get(`/admin/contact-messages/${id}`);
+  return response.data;
+};
+
+export const markContactMessageRead = async (id) => {
+  const response = await api.patch(`/admin/contact-messages/${id}/read`);
   return response.data;
 };
 
@@ -110,6 +222,22 @@ export const getVocabularyWord = async (id) => {
   const response = await api.get(`/vocabulary/${id}`);
   return response.data;
 };
+export const saveScoreData = async (finalScore) => {
+
+  try {
+    const token = localStorage.getItem("token");
+    const decode = jwtDecode(token);
+    console.log(decode);
+    const res = await api.post("/save/score", {
+      score: finalScore,
+      id: decode.id,
+    });
+    console.log("Saved: ", res.data);
+  }
+  catch (err) {
+    console.log("Error Saving score: ", err);
+  }
+}
 
 export const createVocabulary = async (vocabularyData) => {
   const response = await api.post('/vocabulary', vocabularyData);
@@ -161,11 +289,93 @@ export const getVocabularyStats = async (language, userId) => {
   return response.data;
 };
 
+export const generateAIVocabulary = async (prompt, language = 'French') => {
+  const response = await api.post('/vocabulary/generate-ai', { prompt, language });
+  return response.data;
+};
+
+export const askLessonAI = async (context, question) => {
+  const response = await api.post('/lessons/ask-ai', { context, question });
+  return response.data;
+};
+
+
 // Contact API
 export const submitContactForm = async (contactData) => {
   const response = await api.post('/contact', contactData);
   return response.data;
 };
 
-export default api;
+// Progress API
+export const getProgress = async (language, userId) => {
+  const params = new URLSearchParams();
+  if (language) params.append('language', language);
+  if (userId) params.append('userId', userId);
+  const response = await api.get(`/progress?${params}`);
+  return response.data;
+};
 
+export const getLanguageProgress = async (language, userId) => {
+  const params = new URLSearchParams();
+  if (userId) params.append('userId', userId);
+  const response = await api.get(`/progress/${language}?${params}`);
+  return response.data;
+};
+
+export const getUserProgress = async (userId) => {
+  const response = await api.get(`/progress/user/${userId}`);
+  return response.data;
+};
+
+export const updateProgress = async (language = 'French') => {
+  const response = await api.post('/progress/update', { language });
+  return response.data;
+};
+
+export const getProgressSummary = async (language, userId) => {
+  const params = new URLSearchParams();
+  if (language) params.append('language', language);
+  if (userId) params.append('userId', userId);
+  const response = await api.get(`/progress/stats/summary?${params}`);
+
+  return response.data;
+};
+
+// Activity API
+export const logActivity = async (activityData) => {
+  const response = await api.post('/activity', activityData);
+  return response.data;
+};
+
+export const getWeeklyActivity = async () => {
+  const response = await api.get('/activity/weekly');
+  return response.data;
+};
+
+export const getAllActivities = async (limit = 50, skip = 0) => {
+  const response = await api.get(`/activity/all?limit=${limit}&skip=${skip}`);
+  return response.data;
+};
+
+// Gamification APIs
+export const getGamificationSummary = async () => {
+  const response = await api.get('/gamification/summary');
+  return response.data;
+};
+
+export const getWeeklyGamificationActivity = async () => {
+  const response = await api.get('/gamification/weekly');
+  return response.data;
+};
+
+export const awardXP = async (activityData) => {
+  const response = await api.post('/gamification/award-xp', activityData);
+  return response.data;
+};
+
+export const getAchievements = async () => {
+  const response = await api.get('/gamification/achievements');
+  return response.data;
+};
+
+export default api;
