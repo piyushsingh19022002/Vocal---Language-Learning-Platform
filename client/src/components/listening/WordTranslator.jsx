@@ -74,16 +74,16 @@ const WordTranslator = ({ word, sourceLang = 'en', onClose }) => {
       </button>
 
       <div style={{ marginBottom: '10px' }}>
-        <div style={{ fontSize: '14px', color: '#475569', marginBottom: '4px' }}>
+        <div style={{ fontSize: '14px', marginBottom: '4px' }} className="text-secondary">
           Selected word
         </div>
-        <div style={{ fontWeight: 800, fontSize: '20px', color: '#0f172a' }}>
+        <div style={{ fontWeight: 800, fontSize: '20px' }} className="text-primary">
           {word}
         </div>
       </div>
 
       <label style={{ display: 'grid', gap: '6px', marginBottom: '12px' }}>
-        <span style={{ fontSize: '14px', color: '#475569' }}>Convert To Language</span>
+        <span style={{ fontSize: '14px' }} className="text-secondary">Convert To Language</span>
         <select
           value={targetLang}
           onChange={(e) => setTargetLang(e.target.value)}
@@ -113,7 +113,7 @@ const WordTranslator = ({ word, sourceLang = 'en', onClose }) => {
       </button>
 
       {error ? (
-        <div style={{ color: '#dc2626', fontSize: '14px' }}>{error}</div>
+        <div style={{ fontSize: '14px' }} className="text-error">{error}</div>
       ) : null}
       {meaning ? (
         <div
