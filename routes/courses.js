@@ -1,14 +1,17 @@
 const express = require('express');
 const Course = require('../models/Course');
 const { protect } = require('../middleware/auth');
+const { checkCourseAccess } = require('../middleware/courseAccess');
 
 const router = express.Router();
 
 // @route   GET /api/courses
-// @desc    Get all courses
+// @desc    Get all courses (public list - access control on individual course)
 // @access  Public
 router.get('/', async (req, res) => {
   try {
+    // Return all courses for display
+    // Individual course access is controlled by checkCourseAccess middleware
     const courses = await Course.find().populate('lessons');
     res.json(courses);
   } catch (error) {
@@ -17,9 +20,9 @@ router.get('/', async (req, res) => {
 });
 
 // @route   GET /api/courses/:id
-// @desc    Get single course
-// @access  Public
-router.get('/:id', async (req, res) => {
+// @desc    Get single course (with access control)
+// @access  Private (requires enrollment or admin)
+router.get('/:id', protect, checkCourseAccess, async (req, res) => {
   try {
     const course = await Course.findById(req.params.id).populate('lessons');
     if (!course) {

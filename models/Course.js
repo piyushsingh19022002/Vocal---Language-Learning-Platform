@@ -76,6 +76,11 @@ const courseSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  // Course access control
+  isFree: {
+    type: Boolean,
+    default: false,
+  },
 }, {
   timestamps: true,
 });
