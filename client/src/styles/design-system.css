@@ -5,127 +5,130 @@
 
 :root {
     /* ============================================
-     PRIMARY COLORS - Electric Neon Palette
+     PRIMARY COLORS - Restore Purple Palette
      ============================================ */
-    --color-primary: #8E32E9;
-    /* Electric Purple */
-    --color-primary-light: #A855F7;
+    --color-primary: #667eea;
+    /* Primary Purple */
+    --color-primary-light: #8ca0f2;
     /* Lighter Purple */
-    --color-primary-dark: #7C3AED;
+    --color-primary-dark: #5a6fd6;
     /* Darker Purple */
 
-    --color-secondary: #00E5FF;
-    /* Neon Cyan */
-    --color-secondary-light: #4FFFB0;
-    /* Lighter Cyan */
-    --color-secondary-dark: #00B8D4;
-    /* Darker Cyan */
+    --color-secondary: #764ba2;
+    /* Secondary Purple */
+    --color-secondary-light: #956ec4;
+    /* Lighter Secondary */
+    --color-secondary-dark: #5b3680;
+    /* Darker Secondary */
 
-    --color-accent: #FF4D6B;
-    /* Fiery Rose */
-    --color-accent-light: #FF6B88;
-    /* Lighter Rose */
-    --color-accent-dark: #E91E63;
-    /* Darker Rose */
+    --color-accent: #f093fb;
+    /* Accent Pink */
+    --color-accent-light: #f5b6fc;
+    /* Lighter Pink */
+    --color-accent-dark: #d66bf5;
+    /* Darker Pink */
 
-    --color-highlight: #FF9100;
-    /* Vivid Orange */
-    --color-highlight-light: #FFB74D;
-    /* Lighter Orange */
-    --color-highlight-dark: #F57C00;
-    /* Darker Orange */
+    --color-highlight: #f5576c;
+    /* Accent Red-Pink */
+    --color-highlight-light: #ff7a8a;
+    /* Lighter */
+    --color-highlight-dark: #d13b50;
+    /* Darker */
 
     /* ============================================
      BACKGROUND COLORS
      ============================================ */
-    --bg-dark-primary: #121212;
-    /* Deep Charcoal */
-    --bg-dark-secondary: #1E1E1E;
-    /* Soft Dark */
-    --bg-dark-tertiary: #0A0A0A;
-    /* Midnight */
+    --bg-dark-primary: #1a202c;
+    /* Dark Text Color as heavy dark */
+    --bg-dark-secondary: #2d3748;
+    /* Muted Dark */
+    --bg-dark-tertiary: #4a5568;
+    /* Muted Text Color */
 
     --bg-light-primary: #FFFFFF;
     /* Pure White */
-    --bg-light-secondary: #F5F5F5;
-    /* Soft White */
-    --bg-light-tertiary: #FAFAFA;
-    /* Off White */
+    --bg-light-secondary: #f7fafc;
+    /* Light Background */
+    --bg-light-tertiary: #edf2f7;
+    /* Grayish White */
 
     /* ============================================
      NEUTRAL COLORS
      ============================================ */
     --color-white: #FFFFFF;
     /* Grays for text on dark backgrounds */
-    --color-gray-100: #F7FAFC;
-    --color-gray-200: #E2E8F0;
-    --color-gray-300: #CBD5E0;
-    --color-gray-400: #A0AEC0;
-    --color-gray-500: #718096;
-    --color-gray-600: #4A5568;
-    --color-gray-700: #2D3748;
-    --color-gray-800: #1A202C;
-    --color-gray-900: #171923;
+    --color-gray-100: #f7fafc;
+    --color-gray-200: #edf2f7;
+    --color-gray-300: #e2e8f0;
+    --color-gray-400: #cbd5e0;
+    --color-gray-500: #a0aec0;
+    --color-gray-600: #718096;
+    --color-gray-700: #4a5568;
+    /* Muted Text */
+    --color-gray-800: #2d3748;
+    --color-gray-900: #1a202c;
+    /* Dark Text */
 
     /* ============================================
      FUNCTIONAL COLORS
      ============================================ */
-    --color-success: #00E676;
-    /* Vibrant Green */
-    --color-success-light: #69F0AE;
-    --color-success-dark: #00C853;
+    --color-success: #48bb78;
+    /* Green */
+    --color-success-light: #68d391;
+    --color-success-dark: #38a169;
 
-    --color-error: #FF5252;
-    /* Soft Crimson */
-    --color-error-light: #FF8A80;
-    --color-error-dark: #D32F2F;
+    --color-error: #f56565;
+    /* Red */
+    --color-error-light: #fc8181;
+    --color-error-dark: #e53e3e;
 
-    --color-warning: #FFD600;
-    /* Warning Amber */
-    --color-warning-light: #FFEA00;
-    --color-warning-dark: #FFC107;
+    --color-warning: #ed8936;
+    /* Orange */
+    --color-warning-light: #f6ad55;
+    --color-warning-dark: #dd6b20;
 
-    --color-info: #00B0FF;
-    /* Info Blue */
-    --color-info-light: #40C4FF;
-    --color-info-dark: #0091EA;
+    --color-info: #4299e1;
+    /* Blue */
+    --color-info-light: #63b3ed;
+    --color-info-dark: #3182ce;
 
     /* ============================================
      GRADIENTS
      ============================================ */
-    --gradient-primary: linear-gradient(135deg, #8E32E9 0%, #00E5FF 100%);
-    --gradient-secondary: linear-gradient(135deg, #FF4D6B 0%, #FF9100 100%);
-    --gradient-success: linear-gradient(135deg, #00E676 0%, #00E5FF 100%);
-    --gradient-fire: linear-gradient(135deg, #FFD600 0%, #FF9100 100%);
-    --gradient-purple-blue: linear-gradient(135deg, #8E32E9 0%, #00B0FF 100%);
-    --gradient-pink-orange: linear-gradient(135deg, #FF4D6B 0%, #FFB74D 100%);
-    --gradient-dark: linear-gradient(135deg, #1E1E1E 0%, #0A0A0A 100%);
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    --gradient-fire: linear-gradient(135deg, #ed8936 0%, #f56565 100%);
+    --gradient-purple-blue: linear-gradient(135deg, #667eea 0%, #4299e1 100%);
+    --gradient-pink-orange: linear-gradient(135deg, #f5576c 0%, #ed8936 100%);
+    --gradient-dark: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
 
     /* ============================================
      GLASSMORPHISM
      ============================================ */
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-bg-light: rgba(255, 255, 255, 0.15);
-    --glass-bg-dark: rgba(0, 0, 0, 0.3);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --glass-border-light: rgba(255, 255, 255, 0.3);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    /* Lighter glass for light theme */
+    --glass-bg-light: rgba(255, 255, 255, 0.95);
+    --glass-bg-dark: rgba(26, 32, 44, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-border-light: rgba(255, 255, 255, 0.8);
     --glass-blur: blur(10px);
     --glass-blur-heavy: blur(20px);
 
     /* ============================================
      SHADOWS
      ============================================ */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.25);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
 
-    /* Neon Glow Shadows */
-    --shadow-glow-primary: 0 8px 24px rgba(142, 50, 233, 0.4);
-    --shadow-glow-primary-hover: 0 12px 32px rgba(142, 50, 233, 0.6);
-    --shadow-glow-secondary: 0 8px 24px rgba(0, 229, 255, 0.4);
-    --shadow-glow-accent: 0 8px 24px rgba(255, 77, 107, 0.4);
-    --shadow-glow-success: 0 8px 24px rgba(0, 230, 118, 0.4);
+    /* Purple Glow Shadows (Restored) */
+    --shadow-glow-primary: 0 4px 14px 0 rgba(102, 126, 234, 0.39);
+    --shadow-glow-primary-hover: 0 6px 20px rgba(102, 126, 234, 0.23);
+    --shadow-glow-secondary: 0 4px 14px 0 rgba(118, 75, 162, 0.39);
+    --shadow-glow-accent: 0 4px 14px 0 rgba(240, 147, 251, 0.39);
+    --shadow-glow-success: 0 4px 14px 0 rgba(72, 187, 120, 0.39);
 
     /* ============================================
      SPACING
