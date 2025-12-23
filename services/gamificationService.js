@@ -1,0 +1,336 @@
+// Gamification Service Layer
+const User = require('../models/User');
+const Activity = require('../models/Activity');
+const achievements = require('../config/achievements');
+const {
+    calculateSpeakingXP,
+    calculateListeningXP,
+    calculateVocabularyXP,
+    levelFromXP,
+    xpForLevel,
+    xpToNextLevel,
+    calculateStarRating
+} = require('./xpCalculator');
+
+/**
+ * Award XP to user based on activity
+ */
+const awardXP = async (userId, activityType, details) => {
+    const user = await User.findById(userId);
+    if (!user) throw new Error('User not found');
+
+    let xpAwarded = 0;
+
+    // Calculate XP based on activity type
+    switch (activityType) {
+        case 'speaking':
+            xpAwarded = calculateSpeakingXP(
+                details.duration || 0,
+                details.score || 0,
+                details.completed || false
+            );
+            break;
+        case 'listening':
+            xpAwarded = calculateListeningXP(
+                details.duration || 0,
+                details.accuracy || 0,
+                details.completed || false
+            );
+            break;
+        case 'vocabulary':
+            xpAwarded = calculateVocabularyXP(
+                details.wordsLearned || 0,
+                details.wordsReviewed || 0,
+                details.perfectRecalls || 0
+            );
+            break;
+        default:
+            xpAwarded = 0;
+    }
+
+    // Update user XP
+    if (!user.gamification) {
+        user.gamification = {
+            level: 1,
+            xp: 0,
+            totalXP: 0,
+            achievements: [],
+            streaks: { current: 0, longest: 0 },
+            dailyGoals: { target: 5, completed: 0 }
+        };
+    }
+
+    const oldLevel = user.gamification.level;
+    user.gamification.xp += xpAwarded;
+    user.gamification.totalXP += xpAwarded;
+
+    // Check for level up
+    const newLevel = levelFromXP(user.gamification.totalXP);
+    const leveledUp = newLevel > oldLevel;
+
+    if (leveledUp) {
+        user.gamification.level = newLevel;
+        user.gamification.xp = user.gamification.totalXP - getTotalXPForLevel(newLevel);
+    }
+
+    // Check for achievements
+    const newAchievements = await checkAchievements(userId, activityType, details);
+
+    await user.save();
+
+    return {
+        xpAwarded,
+        newXP: user.gamification.xp,
+        totalXP: user.gamification.totalXP,
+        leveledUp,
+        newLevel: user.gamification.level,
+        achievements: newAchievements
+    };
+};
+
+/**
+ * Get total XP required for a level
+ */
+const getTotalXPForLevel = (level) => {
+    let total = 0;
+    for (let i = 1; i < level; i++) {
+        total += xpForLevel(i);
+    }
+    return total;
+};
+
+/**
+ * Check and unlock achievements
+ */
+const checkAchievements = async (userId, activityType, details) => {
+    const user = await User.findById(userId);
+    const unlockedAchievements = [];
+
+    // Get activity stats
+    const stats = await getActivityStats(userId);
+
+    for (const achievement of achievements) {
+        // Skip if already unlocked
+        const alreadyUnlocked = user.gamification.achievements.some(
+            a => a.id === achievement.id
+        );
+        if (alreadyUnlocked) continue;
+
+        // Check if requirement is met
+        let requirementMet = false;
+        const { type, value } = achievement.requirement;
+
+        switch (type) {
+            case 'wordsLearned':
+                requirementMet = stats.vocabulary.wordsLearned >= value;
+                break;
+            case 'sessions':
+                requirementMet = stats.speaking.sessions >= value;
+                break;
+            case 'lessonsCompleted':
+                requirementMet = stats.listening.lessonsCompleted >= value;
+                break;
+            case 'streak':
+                requirementMet = user.gamification.streaks.current >= value;
+                break;
+            case 'perfectScore':
+                requirementMet = details.score === value;
+                break;
+            case 'perfectAccuracy':
+                requirementMet = details.accuracy === value;
+                break;
+            case 'totalActivities':
+                requirementMet = stats.overall.totalActivities >= value;
+                break;
+            case 'totalTime':
+                requirementMet = stats.overall.totalTime >= value;
+                break;
+        }
+
+        if (requirementMet) {
+            user.gamification.achievements.push({
+                id: achievement.id,
+                name: achievement.name,
+                unlockedAt: new Date()
+            });
+
+            // Award achievement XP
+            user.gamification.xp += achievement.xpReward;
+            user.gamification.totalXP += achievement.xpReward;
+
+            unlockedAchievements.push(achievement);
+        }
+    }
+
+    if (unlockedAchievements.length > 0) {
+        await user.save();
+    }
+
+    return unlockedAchievements;
+};
+
+/**
+ * Update streak
+ */
+const updateStreak = async (userId) => {
+    const user = await User.findById(userId);
+    if (!user) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const lastActivity = user.gamification.streaks.lastActivityDate;
+
+    if (!lastActivity) {
+        // First activity
+        user.gamification.streaks.current = 1;
+        user.gamification.streaks.lastActivityDate = today;
+    } else {
+        const lastActivityDate = new Date(lastActivity);
+        lastActivityDate.setHours(0, 0, 0, 0);
+
+        const daysDiff = Math.floor((today - lastActivityDate) / (1000 * 60 * 60 * 24));
+
+        if (daysDiff === 0) {
+            // Same day, no change
+            return;
+        } else if (daysDiff === 1) {
+            // Consecutive day
+            user.gamification.streaks.current += 1;
+            user.gamification.streaks.lastActivityDate = today;
+
+            // Update longest streak
+            if (user.gamification.streaks.current > user.gamification.streaks.longest) {
+                user.gamification.streaks.longest = user.gamification.streaks.current;
+            }
+        } else {
+            // Streak broken
+            user.gamification.streaks.current = 1;
+            user.gamification.streaks.lastActivityDate = today;
+        }
+    }
+
+    await user.save();
+};
+
+/**
+ * Get activity stats for user
+ */
+const getActivityStats = async (userId) => {
+    const activities = await Activity.find({ userId });
+
+    const stats = {
+        speaking: {
+            sessions: 0,
+            totalTime: 0,
+            avgScore: 0,
+            xpEarned: 0
+        },
+        listening: {
+            lessonsCompleted: 0,
+            totalTime: 0,
+            avgAccuracy: 0,
+            xpEarned: 0
+        },
+        vocabulary: {
+            wordsLearned: 0,
+            wordsReviewed: 0,
+            mastery: 0,
+            xpEarned: 0
+        },
+        overall: {
+            totalActivities: activities.length,
+            totalTime: 0
+        }
+    };
+
+    let speakingScoreSum = 0;
+    let listeningAccuracySum = 0;
+
+    activities.forEach(activity => {
+        stats.overall.totalTime += activity.duration || 0;
+
+        switch (activity.activityType) {
+            case 'speaking':
+                stats.speaking.sessions++;
+                stats.speaking.totalTime += activity.duration || 0;
+                if (activity.details?.score) {
+                    speakingScoreSum += activity.details.score;
+                }
+                break;
+            case 'listening':
+                if (activity.details?.completed) {
+                    stats.listening.lessonsCompleted++;
+                }
+                stats.listening.totalTime += activity.duration || 0;
+                if (activity.details?.accuracy) {
+                    listeningAccuracySum += activity.details.accuracy;
+                }
+                break;
+            case 'vocabulary':
+                stats.vocabulary.wordsLearned += activity.details?.wordsLearned || 0;
+                stats.vocabulary.wordsReviewed += activity.details?.wordsReviewed || 0;
+                break;
+        }
+    });
+
+    // Calculate averages
+    if (stats.speaking.sessions > 0) {
+        stats.speaking.avgScore = Math.round(speakingScoreSum / stats.speaking.sessions);
+    }
+    if (stats.listening.lessonsCompleted > 0) {
+        stats.listening.avgAccuracy = Math.round(listeningAccuracySum / stats.listening.lessonsCompleted);
+    }
+
+    return stats;
+};
+
+/**
+ * Get activity summary with gamification data
+ */
+const getActivitySummary = async (userId) => {
+    const user = await User.findById(userId);
+  // Initialize gamification data if it does not exist
+  if (!user.gamification) {
+    user.gamification = { level: 1, xp: 0, totalXP: 0, achievements: [], streaks: { current: 0, longest: 0 }, dailyGoals: { target: 5, completed: 0 } };
+    await user.save();
+  }
+    const stats = await getActivityStats(userId);
+
+    // Calculate star ratings
+    const speakingStars = calculateStarRating(stats.speaking.sessions, 'speaking');
+    const listeningStars = calculateStarRating(stats.listening.lessonsCompleted, 'listening');
+    const vocabularyStars = calculateStarRating(stats.vocabulary.wordsLearned, 'vocabulary');
+
+    return {
+        speaking: {
+            ...stats.speaking,
+            stars: speakingStars
+        },
+        listening: {
+            ...stats.listening,
+            stars: listeningStars
+        },
+        vocabulary: {
+            ...stats.vocabulary,
+            stars: vocabularyStars
+        },
+        overall: {
+            level: user.gamification?.level || 1,
+            xp: user.gamification?.xp || 0,
+            totalXP: user.gamification?.totalXP || 0,
+            xpToNextLevel: xpToNextLevel(
+                user.gamification?.level || 1,
+                user.gamification?.xp || 0
+            )
+        }
+    };
+};
+
+module.exports = {
+    awardXP,
+    checkAchievements,
+    updateStreak,
+    getActivityStats,
+    getActivitySummary
+};

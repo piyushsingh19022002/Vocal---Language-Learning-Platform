@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import LessonCard from './LessonCard';
 import './GuidedLessonsPanel.css';
 
@@ -9,8 +8,8 @@ const GuidedLessonsPanel = ({ lessons, listeningLanguage, user, onLessonComplete
 
   const categories = ['All', 'Story', 'Conversation', 'Podcast', 'Practice', 'Real-life'];
 
-  const filteredLessons = categoryFilter === 'All' 
-    ? lessons 
+  const filteredLessons = categoryFilter === 'All'
+    ? lessons
     : lessons.filter(lesson => lesson.category === categoryFilter);
 
   // Get user's lesson progress from localStorage (client-side tracking)
@@ -30,12 +29,12 @@ const GuidedLessonsPanel = ({ lessons, listeningLanguage, user, onLessonComplete
       progress: 100,
       completedAt: new Date().toISOString(),
     }));
-    
+
     // Call parent callback
     if (onLessonComplete) {
       onLessonComplete(lessonId, duration);
     }
-    
+
     setPlayingLessonId(null);
   };
 

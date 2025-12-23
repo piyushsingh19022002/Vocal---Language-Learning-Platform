@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useParams, useLocation } from "react-router-dom";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { GlobalContext } from "./globalfile";
@@ -13,15 +14,15 @@ import './level.css'
 
 // Import MUI components for popups
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  CircularProgress,
-  Typography,
-  Box,
-  Alert,
-  Snackbar,
-  LinearProgress
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    CircularProgress,
+    Typography,
+    Box,
+    Alert,
+    Snackbar,
+    LinearProgress
 } from '@mui/material';
 
 import {
@@ -67,7 +68,7 @@ export default function Level1() {
     const [isComparing, setIsComparing] = useState(false);
     const [showResults, setShowResults] = useState(false);
     const [overallAccuracy, setOverallAccuracy] = useState(0);
-    
+
     // New state for popups
     const [loading, setLoading] = useState(false);
     const [loadingTime, setLoadingTime] = useState(0);
@@ -76,7 +77,7 @@ export default function Level1() {
 
     // Track which sentences have been scored to prevent duplicate scoring
     const [scoredSentences, setScoredSentences] = useState(new Set());
-    
+
     // Create a unique key for current sentence - moved inside component
     const currentSentenceKey = `${qIndex}-${index}`;
 
@@ -88,28 +89,28 @@ export default function Level1() {
         if (!result || result.length === 0 || !result[qIndex] || result[qIndex].length <= index) {
             return null;
         }
-        
+
         const sentenceData = result[qIndex][index];
-        
+
         // Handle case where sentenceData might be the question title (index 0)
         if (index === 0) {
             return null; // This is the question title, not a sentence
         }
-        
+
         // Check if sentenceData is an object with the expected properties
         if (sentenceData && typeof sentenceData === 'object') {
             return sentenceData;
         }
-        
+
         return null;
     };
     let targetsen;
     // Get current sentence text
-    let targetcode=code;
+    let targetcode = code;
     const getCurrentSentenceText = () => {
         const sentenceData = getCurrentSentenceData();
         if (!sentenceData) return null;
-        targetsen=sentenceData.meaning_in_target;
+        targetsen = sentenceData.meaning_in_target;
         return sentenceData.meaning_in_target || sentenceData.sentence || "";
     };
 
@@ -118,10 +119,10 @@ export default function Level1() {
     const getCurrentPronunciation = () => {
         const sentenceData = getCurrentSentenceData();
         if (!sentenceData) return "";
-        pronunciationd=sentenceData.pronunciation_in_source_script;
+        pronunciationd = sentenceData.pronunciation_in_source_script;
         return sentenceData.pronunciation_in_source_script || sentenceData.pronunciation || "";
     };
-    
+
     const Onhandle = () => {
         if (result && result.length > 0 && result[qIndex]) {
             // Check if there's a next sentence in current question
@@ -149,13 +150,13 @@ export default function Level1() {
 
     const calculateScore = (match) => {
         if (!match) return;
-        
+
         // Check if this sentence has already been scored
         if (scoredSentences.has(currentSentenceKey)) {
             console.log("Sentence already scored, skipping score calculation");
             return;
         }
-        
+
         let sd = 0, sv = 0;
         match.forEach(item => {
             sd += item.score;
@@ -163,10 +164,10 @@ export default function Level1() {
         })
         const currentScore = (sd / sv) * 100 * 0.05;
         setTotalScore(prev => prev + currentScore);
-        
+
         // Mark this sentence as scored
         setScoredSentences(prev => new Set(prev).add(currentSentenceKey));
-        
+
         // Calculate overall accuracy for the current comparison
         const accuracy = (sd / sv) * 100;
         setOverallAccuracy(accuracy);
@@ -212,7 +213,7 @@ export default function Level1() {
         } else {
             setLoadingTime(0);
         }
-        
+
         return () => {
             if (timer) clearInterval(timer);
         };
@@ -221,7 +222,7 @@ export default function Level1() {
     // Function to scroll to results
     const scrollToResults = () => {
         if (resultsRef.current) {
-            resultsRef.current.scrollIntoView({ 
+            resultsRef.current.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
@@ -231,24 +232,24 @@ export default function Level1() {
     const handleCompare = () => {
         const sentenceText = getCurrentSentenceText();
         if (!sentenceText || !text) {
-            console.error("Cannot compare: Missing data", { 
-                sentenceText, 
-                text, 
-                result, 
-                qIndex, 
+            console.error("Cannot compare: Missing data", {
+                sentenceText,
+                text,
+                result,
+                qIndex,
                 index,
                 currentData: getCurrentSentenceData()
             });
             return;
         }
-        
+
         setIsComparing(true);
         setTimeout(() => {
             const comparisonResult = CompareText(sentenceText, text);
             setMatch(comparisonResult);
             setShowResults(true);
             setIsComparing(false);
-            
+
             // Scroll to results after a short delay
             setTimeout(() => {
                 scrollToResults();
@@ -262,7 +263,7 @@ export default function Level1() {
         setMatch(null);
         setText(""); // Clear speech text
         setScoredSentences(new Set()); // Reset scored sentences when loading new questions
-        
+
         try {
             const res = await question({
                 source: `${language}`,
@@ -270,13 +271,13 @@ export default function Level1() {
                 category: `${Category}`,
                 id: `${id}`,
             });
-            
+
             const parse = JSON.parse(res.result);
             const arr = Object.entries(parse);
-            
+
             setResult(arr);
             setQIndex(0);
-            
+
             // Check if first question has sentences beyond the title
             if (arr.length > 0 && arr[0].length > 1) {
                 setIndex(1); // Start at first sentence
@@ -297,7 +298,7 @@ export default function Level1() {
         try {
             await saveScoreData(totalScore);
             setSaveSuccess(true);
-            
+
             // Auto-hide the success message after 3 seconds
             setTimeout(() => {
                 setSaveSuccess(false);
@@ -305,7 +306,7 @@ export default function Level1() {
         } catch (error) {
             console.error("Error saving progress:", error);
             setSaveError(true);
-            
+
             // Auto-hide the error message after 3 seconds
             setTimeout(() => {
                 setSaveError(false);
@@ -350,15 +351,15 @@ export default function Level1() {
         if (!result || result.length === 0 || !result[qIndex] || !result[qIndex][0]) {
             return "";
         }
-        defaultvalue=result[qIndex][0];
+        defaultvalue = result[qIndex][0];
         return result[qIndex][0];
     }
 
     return (
         <div style={containerStyle}>
             {/* Loading Popup Dialog */}
-            <Dialog 
-                open={loading} 
+            <Dialog
+                open={loading}
                 maxWidth="sm"
                 fullWidth
                 PaperProps={{
@@ -371,8 +372,8 @@ export default function Level1() {
                 }}
             >
                 <DialogContent style={{ textAlign: 'center', padding: '40px 20px' }}>
-                    <CircularProgress 
-                        size={70} 
+                    <CircularProgress
+                        size={70}
                         thickness={4}
                         style={{ color: '#667eea', marginBottom: '25px' }}
                     />
@@ -382,10 +383,10 @@ export default function Level1() {
                     <Typography variant="body1" style={{ marginBottom: '30px', color: '#666', fontSize: '1.1rem' }}>
                         Please wait while we generate your new practice set...
                     </Typography>
-                    
+
                     <Box style={{ marginBottom: '20px' }}>
-                        <LinearProgress 
-                            variant="determinate" 
+                        <LinearProgress
+                            variant="determinate"
                             value={loadingTime}
                             style={{
                                 height: '12px',
@@ -394,19 +395,19 @@ export default function Level1() {
                             }}
                         />
                     </Box>
-                    
-                    <Typography variant="body2" style={{ 
-                        color: '#667eea', 
+
+                    <Typography variant="body2" style={{
+                        color: '#667eea',
                         fontWeight: '600',
                         fontSize: '1.1rem',
                         marginBottom: '15px'
                     }}>
                         {loadingTime}% complete
                     </Typography>
-                    
-                    <div style={{ 
-                        marginTop: '30px', 
-                        fontSize: '0.95rem', 
+
+                    <div style={{
+                        marginTop: '30px',
+                        fontSize: '0.95rem',
                         color: '#888',
                         display: 'flex',
                         justifyContent: 'center',
@@ -430,13 +431,13 @@ export default function Level1() {
                 open={saveSuccess}
                 autoHideDuration={3000}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                style={{ 
+                style={{
                     zIndex: 9999,
                     bottom: '30px'
                 }}
             >
-                <Alert 
-                    severity="success" 
+                <Alert
+                    severity="success"
                     variant="filled"
                     style={{
                         background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)',
@@ -450,14 +451,14 @@ export default function Level1() {
                     }}
                     icon={false}
                 >
-                    <div style={{ 
-                        display: 'flex', 
+                    <div style={{
+                        display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '12px'
                     }}>
-                        <span style={{ 
-                            fontSize: '1.8rem', 
+                        <span style={{
+                            fontSize: '1.8rem',
                             animation: 'bounce 0.5s ease infinite alternate'
                         }}>✅</span>
                         <span style={{ fontSize: '1.1rem' }}>Progress saved successfully!</span>
@@ -470,13 +471,13 @@ export default function Level1() {
                 open={saveError}
                 autoHideDuration={3000}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                style={{ 
+                style={{
                     zIndex: 9999,
                     bottom: '30px'
                 }}
             >
-                <Alert 
-                    severity="error" 
+                <Alert
+                    severity="error"
                     variant="filled"
                     style={{
                         background: 'linear-gradient(135deg, #F44336 0%, #d32f2f 100%)',
@@ -490,8 +491,8 @@ export default function Level1() {
                     }}
                     icon={false}
                 >
-                    <div style={{ 
-                        display: 'flex', 
+                    <div style={{
+                        display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '12px'
@@ -522,9 +523,9 @@ export default function Level1() {
                                 <span style={{ marginRight: "10px" }}>📝</span>
                                 Practice Sentence {getSentenceNumber()}
                                 {result && result.length > 0 && (
-                                    <span style={{ 
-                                        fontSize: "0.9rem", 
-                                        color: "#666", 
+                                    <span style={{
+                                        fontSize: "0.9rem",
+                                        color: "#666",
                                         marginLeft: "10px",
                                         fontWeight: "normal"
                                     }}>
@@ -543,9 +544,9 @@ export default function Level1() {
                         {/* Current Question Title */}
                         {result && result.length > 0 && getCurrentQuestionTitle() && (
                             <div style={currentQuestionTitleStyle}>
-                                <h3 style={{ 
-                                    margin: "0 0 10px 0", 
-                                    fontSize: "1.1rem", 
+                                <h3 style={{
+                                    margin: "0 0 10px 0",
+                                    fontSize: "1.1rem",
                                     color: "#666",
                                     fontWeight: "500"
                                 }}>
@@ -562,8 +563,8 @@ export default function Level1() {
                                     Target Sentence (in {learningLanguage})
                                 </span>
                                 {result && result.length > 0 && getCurrentSentenceText() && (
-                                    <span style={{ 
-                                        fontSize: "0.8rem", 
+                                    <span style={{
+                                        fontSize: "0.8rem",
                                         color: "#888",
                                         backgroundColor: "#f0f0f0",
                                         padding: "3px 8px",
@@ -593,9 +594,9 @@ export default function Level1() {
                                 </h3>
                                 <div style={languageCodeContainerStyle}>
                                     {learningLanguage && (
-                                        <Languagecode 
-                                            language={learningLanguage} 
-                                            onCodeChange={(code) => setLanguageCode(code)} 
+                                        <Languagecode
+                                            language={learningLanguage}
+                                            onCodeChange={(code) => setLanguageCode(code)}
                                         />
                                     )}
                                 </div>
@@ -609,7 +610,7 @@ export default function Level1() {
                                     style={textAreaStyle}
                                 />
                                 <div style={buttonGroupStyle}>
-                                    <button 
+                                    <button
                                         onClick={() => startListening(code)}
                                         style={recordButtonStyle}
                                         disabled={!code || loading}
@@ -617,8 +618,8 @@ export default function Level1() {
                                         <span style={{ fontSize: "1.5rem", marginRight: "10px" }}>🎤</span>
                                         {text ? "Speak Again" : "Start Speaking"}
                                     </button>
-                                    
-                                    <button 
+
+                                    <button
                                         onClick={handleCompare}
                                         style={compareButtonStyle}
                                         disabled={!text || isComparing || loading || !getCurrentSentenceText()}
@@ -632,8 +633,8 @@ export default function Level1() {
                                             <>
                                                 <span style={{ marginRight: "8px" }}>📊</span>
                                                 Compare Results
-                                                <span style={{ 
-                                                    fontSize: "1rem", 
+                                                <span style={{
+                                                    fontSize: "1rem",
                                                     marginLeft: "8px",
                                                     animation: "bounceDown 2s ease infinite"
                                                 }}>⬇</span>
@@ -646,18 +647,18 @@ export default function Level1() {
 
                         {/* Navigation */}
                         <div style={navigationStyle}>
-                            <button 
-                                onClick={Onhandle} 
+                            <button
+                                onClick={Onhandle}
                                 disabled={(!result || result.length === 0) || loading}
                                 style={navButtonStyle}
                             >
                                 <span style={{ marginRight: "8px" }}>→</span>
-                                {result && result.length > 0 && qIndex + 1 >= result.length && index + 1 >= getTotalSentencesInCurrentQuestion() ? 
-                                    "Start Over" : 
+                                {result && result.length > 0 && qIndex + 1 >= result.length && index + 1 >= getTotalSentencesInCurrentQuestion() ?
+                                    "Start Over" :
                                     "Next Sentence"
                                 }
                             </button>
-                            <button 
+                            <button
                                 onClick={handleGetQuestion}
                                 style={getQuestionButtonStyle}
                                 disabled={loading}
@@ -684,8 +685,8 @@ export default function Level1() {
                                 <span style={{ marginRight: "8px" }}>🔊</span>
                                 Listen & Repeat
                             </h3>
-                            <SpeakSentence 
-                                sentence={getCurrentSentenceText()} 
+                            <SpeakSentence
+                                sentence={getCurrentSentenceText()}
                                 lang={code}
                                 style={audioPlayerButtonStyle}
                             />
@@ -701,7 +702,7 @@ export default function Level1() {
                             <span style={{ marginRight: "10px" }}>📈</span>
                             Your Progress
                         </h2>
-                        
+
                         <div style={scoreGridStyle}>
                             <div style={scoreItemStyle}>
                                 <div style={scoreNumberStyle}>{Math.round(totalScore)}</div>
@@ -719,7 +720,7 @@ export default function Level1() {
 
                         {/* Score Controls */}
                         <div style={scoreControlsStyle}>
-                            <button 
+                            <button
                                 onClick={() => dispatch(addScore())}
                                 style={scoreActionButtonStyle("#4CAF50")}
                                 disabled={loading}
@@ -727,7 +728,7 @@ export default function Level1() {
                                 <span style={{ marginRight: "5px" }}>➕</span>
                                 Add Score
                             </button>
-                            <button 
+                            <button
                                 onClick={() => dispatch(minusScore())}
                                 style={scoreActionButtonStyle("#F44336")}
                                 disabled={loading}
@@ -742,7 +743,7 @@ export default function Level1() {
                         </div>
 
                         {/* Submit Button */}
-                        <button 
+                        <button
                             onClick={handleSaveProgress}
                             style={submitButtonStyle}
                             disabled={loading}
@@ -750,7 +751,7 @@ export default function Level1() {
                             <span style={{ marginRight: "8px" }}>💾</span>
                             Save Progress
                         </button>
-                        
+
                         {/* Save Status Indicator */}
                         {saveSuccess && (
                             <div style={{
@@ -822,8 +823,8 @@ export default function Level1() {
                             <h2 style={{ margin: 0, fontSize: "1.5rem", color: "#333" }}>
                                 <span style={{ marginRight: "10px" }}>📊</span>
                                 Comparison Results
-                                <span style={{ 
-                                    fontSize: "1rem", 
+                                <span style={{
+                                    fontSize: "1rem",
                                     marginLeft: "10px",
                                     color: "#666",
                                     fontWeight: "normal"
@@ -874,7 +875,7 @@ export default function Level1() {
 
                         {/* Back to top button */}
                         <div style={{ textAlign: "center", marginTop: "30px" }}>
-                            <button 
+                            <button
                                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                                 style={{
                                     background: "#667eea",

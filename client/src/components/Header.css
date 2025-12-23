@@ -1,14 +1,15 @@
-/* Header.css - Redesign */
+/* Header.css - Electric Neon Redesign */
 
 .header {
-  background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); /* Softer shadow */
+  background: var(--glass-bg-dark);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-md);
   padding: 1rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .header-container {
@@ -25,8 +26,8 @@
   align-items: center;
   gap: 0.75rem;
   text-decoration: none;
-  color: #2d3748;
-  font-weight: 800;
+  color: var(--color-white);
+  font-weight: var(--font-weight-extrabold);
   font-size: 1.5rem;
   letter-spacing: -0.5px;
 }
@@ -34,19 +35,19 @@
 .logo-icon {
   width: 42px;
   height: 42px;
-  background: linear-gradient(135deg, #6d5dfc, #f093fb);
-  border-radius: 12px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: 800;
+  color: var(--color-white);
+  font-weight: var(--font-weight-extrabold);
   font-size: 1.25rem;
-  box-shadow: 0 4px 10px rgba(109, 93, 252, 0.3);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .logo-text {
-  background: linear-gradient(135deg, #6d5dfc, #f093fb);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -60,15 +61,15 @@
 
 .nav-link {
   text-decoration: none;
-  color: #4a5568;
-  font-weight: 600;
+  color: var(--color-gray-300);
+  font-weight: var(--font-weight-semibold);
   font-size: 0.95rem;
-  transition: all 0.3s;
+  transition: all var(--transition-base);
   position: relative;
 }
 
 .nav-link:hover {
-  color: #6d5dfc;
+  color: var(--color-primary);
 }
 
 .nav-link::after {
@@ -78,7 +79,7 @@
   height: 2px;
   bottom: -4px;
   left: 0;
-  background: linear-gradient(90deg, #6d5dfc, #f093fb);
+  background: var(--gradient-primary);
   transition: width 0.3s ease;
   border-radius: 2px;
 }
@@ -96,40 +97,41 @@
 
 .btn-login {
   background: transparent;
-  color: #6d5dfc;
+  color: var(--color-primary);
   padding: 0.625rem 1.5rem;
-  border: 2px solid rgba(109, 93, 252, 0.2);
-  border-radius: 50px;
+  border: 2px solid var(--glass-border-light);
+  border-radius: var(--radius-full);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   font-size: 0.9375rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   cursor: pointer;
 }
 
 .btn-login:hover {
-  border-color: #6d5dfc;
-  background: rgba(109, 93, 252, 0.05);
+  border-color: var(--color-primary);
+  background: var(--glass-bg);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .btn-register {
-  background: linear-gradient(135deg, #6d5dfc 0%, #f093fb 100%);
-  color: white;
+  background: var(--gradient-primary);
+  color: var(--color-white);
   padding: 0.75rem 1.75rem;
   border: none;
-  border-radius: 50px;
+  border-radius: var(--radius-full);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   font-size: 0.9375rem;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(109, 93, 252, 0.25);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .btn-register:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(109, 93, 252, 0.35);
+  box-shadow: var(--shadow-glow-primary-hover);
 }
 
 /* User Section (Logged In) */
@@ -144,7 +146,8 @@
   gap: 0.75rem;
   padding: 0.35rem 0.35rem 0.35rem 1rem;
   background: white;
-  border: 1px solid rgba(0, 0, 0, 0.08); /* Minimal border */
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  /* Minimal border */
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -155,7 +158,8 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-.profile-chip:hover, .profile-chip[aria-expanded="true"] {
+.profile-chip:hover,
+.profile-chip[aria-expanded="true"] {
   transform: translateY(-1px);
   border-color: rgba(109, 93, 252, 0.3);
   box-shadow: 0 4px 12px rgba(109, 93, 252, 0.15);
@@ -164,16 +168,16 @@
 .profile-avatar {
   width: 38px;
   height: 38px;
-  background: linear-gradient(135deg, #6d5dfc 0%, #f093fb 100%);
+  background: var(--gradient-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: 700;
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
   font-size: 1rem;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(109, 93, 252, 0.2);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .profile-name {
@@ -212,7 +216,8 @@
   right: 0;
   background: white;
   border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12); /* Deep soft shadow */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  /* Deep soft shadow */
   min-width: 220px;
   overflow: hidden;
   animation: dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -226,6 +231,7 @@
     opacity: 0;
     transform: translateY(-10px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -260,8 +266,9 @@
   color: #ef4444;
   margin-top: 0.25rem;
   border-top: 1px solid #edf2f7;
-  border-radius: 0 0 12px 12px; /* Bottom rounded corners only if absolutely needed, but keeping unified looks better */
-  border-radius: 12px; 
+  border-radius: 0 0 12px 12px;
+  /* Bottom rounded corners only if absolutely needed, but keeping unified looks better */
+  border-radius: 12px;
 }
 
 .dropdown-item-logout:hover {
@@ -285,14 +292,16 @@
   }
 
   .nav {
-    display: none; /* Mobile Menu TODO or just hide based on existing code */
+    display: none;
+    /* Mobile Menu TODO or just hide based on existing code */
   }
 
   .auth-buttons {
     gap: 0.5rem;
   }
 
-  .btn-login, .btn-register {
+  .btn-login,
+  .btn-register {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
   }
@@ -300,7 +309,7 @@
   .profile-name {
     display: none;
   }
-  
+
   .profile-chip {
     padding: 0.35rem;
     border-radius: 50%;
@@ -328,6 +337,7 @@
 
 @media (max-width: 480px) {
   .logo-text {
-    display: none; /* Save space on very small screens */
+    display: none;
+    /* Save space on very small screens */
   }
 }

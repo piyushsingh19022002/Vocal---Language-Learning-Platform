@@ -27,17 +27,17 @@ export const register = async (userData) => {
   // OTP verification - no token returned, user needs to verify first
   return response.data;
 };
-export const question=async(data)=>{
+export const question = async (data) => {
   console.log(data);
-  
-  const response=await api.post('/question/fetchanswer',data);
+
+  const response = await api.post('/question/fetchanswer', data);
   console.log(response);
   return response.data;
 }
 
 export const login = async (userData) => {
   const response = await api.post('/auth/login', userData);
-  localStorage.setItem('email',userData);
+  localStorage.setItem('email', userData);
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
   }
@@ -49,8 +49,8 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
-export const loginWithGoogle = async (tokenId, userInfo = null) => {
-  const response = await api.post('/auth/google', { tokenId, userInfo });
+export const loginWithGoogle = async (credential) => {
+  const response = await api.post('/auth/google', { tokenId: credential });
   if (response.data.token) {
     localStorage.setItem('token', response.data.token);
   }
@@ -112,7 +112,10 @@ export const deleteAdminCourse = async (courseId) => {
   return response.data;
 };
 
-// Admin Course Access Management
+export const getUserCourses = async (userId) => {
+  const response = await api.get(`/admin/users/${userId}/courses`);
+  return response.data;
+};
 export const assignCourseToUser = async (userId, courseId) => {
   const response = await api.post('/admin/assign-course', { userId, courseId });
   return response.data;
@@ -123,8 +126,24 @@ export const revokeCourseFromUser = async (userId, courseId) => {
   return response.data;
 };
 
-export const getUserCourses = async (userId) => {
-  const response = await api.get(`/admin/users/${userId}/courses`);
+// Lesson APIs
+export const getLessonsByCourse = async (courseId) => {
+  const response = await api.get(`/lessons?courseId=${courseId}`);
+  return response.data;
+};
+
+export const createLesson = async (lessonData) => {
+  const response = await api.post('/lessons', lessonData);
+  return response.data;
+};
+
+export const updateLesson = async (lessonId, updates) => {
+  const response = await api.put(`/lessons/${lessonId}`, updates);
+  return response.data;
+};
+
+export const deleteLesson = async (lessonId) => {
+  const response = await api.delete(`/lessons/${lessonId}`);
   return response.data;
 };
 
@@ -202,20 +221,20 @@ export const getVocabularyWord = async (id) => {
   const response = await api.get(`/vocabulary/${id}`);
   return response.data;
 };
-export const saveScoreData=async(finalScore)=>{
+export const saveScoreData = async (finalScore) => {
 
-  try{
-    const token=localStorage.getItem("token");
-    const decode=jwtDecode(token);
+  try {
+    const token = localStorage.getItem("token");
+    const decode = jwtDecode(token);
     console.log(decode);
-  const res=await api.post("/save/score",{
-    score:finalScore,
-    id:decode.id,
-  });
-  console.log("Saved: ",res.data);
+    const res = await api.post("/save/score", {
+      score: finalScore,
+      id: decode.id,
+    });
+    console.log("Saved: ", res.data);
   }
-  catch(err){
-    console.log("Error Saving score: ",err);
+  catch (err) {
+    console.log("Error Saving score: ", err);
   }
 }
 
@@ -269,6 +288,15 @@ export const getVocabularyStats = async (language, userId) => {
   return response.data;
 };
 
+export const generateAIVocabulary = async (prompt, language = 'French') => {
+  const response = await api.post('/vocabulary/generate-ai', { prompt, language });
+  return response.data;
+};
+
+export const askLessonAI = async (context, question) => {
+  const response = await api.post('/lessons/ask-ai', { context, question });
+  return response.data;
+};
 
 // Contact API
 export const submitContactForm = async (contactData) => {
@@ -310,5 +338,43 @@ export const getProgressSummary = async (language, userId) => {
   return response.data;
 };
 
-export default api;
 
+
+// Activity API
+export const logActivity = async (activityData) => {
+  const response = await api.post('/activity', activityData);
+  return response.data;
+};
+
+export const getWeeklyActivity = async () => {
+  const response = await api.get('/activity/weekly');
+  return response.data;
+};
+
+export const getAllActivities = async (limit = 50, skip = 0) => {
+  const response = await api.get(`/activity/all?limit=${limit}&skip=${skip}`);
+  return response.data;
+};
+
+// Gamification APIs
+export const getGamificationSummary = async () => {
+  const response = await api.get('/gamification/summary');
+  return response.data;
+};
+
+export const getWeeklyGamificationActivity = async () => {
+  const response = await api.get('/gamification/weekly');
+  return response.data;
+};
+
+export const awardXP = async (activityData) => {
+  const response = await api.post('/gamification/award-xp', activityData);
+  return response.data;
+};
+
+export const getAchievements = async () => {
+  const response = await api.get('/gamification/achievements');
+  return response.data;
+};
+
+export default api;

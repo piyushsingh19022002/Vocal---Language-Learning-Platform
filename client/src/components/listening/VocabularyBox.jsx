@@ -13,7 +13,7 @@ const VocabularyBox = ({ words = [] }) => (
       animation: 'fadeIn 220ms ease',
     }}
   >
-    <div style={{ fontWeight: 800, marginBottom: '2px', color: '#0f172a' }}>Vocabulary</div>
+    <div style={{ fontWeight: 800, marginBottom: '2px' }} className="text-primary">Vocabulary</div>
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
       {words.map((w, idx) => (
         <span

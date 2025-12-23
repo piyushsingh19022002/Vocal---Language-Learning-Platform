@@ -87,6 +87,55 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0, // in minutes
   },
+  // Gamification system
+  gamification: {
+    level: {
+      type: Number,
+      default: 1
+    },
+    xp: {
+      type: Number,
+      default: 0
+    },
+    totalXP: {
+      type: Number,
+      default: 0
+    },
+    achievements: [{
+      id: String,
+      name: String,
+      unlockedAt: {
+        type: Date,
+        default: Date.now
+      },
+      progress: {
+        type: Number,
+        default: 0
+      }
+    }],
+    streaks: {
+      current: {
+        type: Number,
+        default: 0
+      },
+      longest: {
+        type: Number,
+        default: 0
+      },
+      lastActivityDate: Date
+    },
+    dailyGoals: {
+      target: {
+        type: Number,
+        default: 5
+      },
+      completed: {
+        type: Number,
+        default: 0
+      },
+      lastResetDate: Date
+    }
+  },
   // Email verification fields
   isVerified: {
     type: Boolean,

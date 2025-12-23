@@ -1,7 +1,8 @@
 .footer {
-  background: #f8f9fa;
+  background: var(--bg-dark-secondary);
   padding: 3rem 0 1rem;
   margin-top: 4rem;
+  border-top: 1px solid var(--glass-border);
 }
 
 .footer-container {
@@ -20,13 +21,13 @@
 }
 
 .footer-links a {
-  color: #666;
+  color: var(--color-gray-300);
   text-decoration: none;
   transition: color 0.3s;
 }
 
 .footer-links a:hover {
-  color: #6366f1;
+  color: var(--color-primary);
 }
 
 .footer-social {
@@ -42,7 +43,6 @@
 }
 
 .footer-copyright {
-  color: #999;
+  color: var(--color-gray-400);
   font-size: 0.875rem;
 }
-

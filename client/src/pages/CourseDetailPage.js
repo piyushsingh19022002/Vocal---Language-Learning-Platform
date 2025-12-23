@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
-import { getCourse, getLessons } from '../utils/api';
-import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
+import { getCourse, getLessons, askLessonAI, translateWord } from '../utils/api';
 import './CourseDetailPage.css';
 
 const ActionButtons = ({ text, onListen, onTranslate, onAi }) => (
@@ -60,68 +59,66 @@ const CourseDetailPage = () => {
     window.speechSynthesis.speak(utter);
   }, []);
 
-  // Translate handler using LibreTranslate (no API key required). You can swap endpoint via env.
+  // Translate handler using backend API
   const handleTranslate = useCallback(async (text) => {
     if (!text) return;
     setTranslateModal({ open: true, text, result: '', loading: true, error: '' });
-    const endpoint = process.env.REACT_APP_TRANSLATE_URL || 'https://libretranslate.de/translate';
+
     try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          q: text,
-          source: 'en',
-          target: 'hi',
-          format: 'text'
-        })
+      // Use backend translation API
+      // Default: English to Hindi, but can be customized
+      const translatedText = await translateWord(text, 'en', 'hi');
+
+      setTranslateModal({
+        open: true,
+        text,
+        result: translatedText,
+        loading: false,
+        error: ''
       });
-      if (!res.ok) throw new Error('Translation failed');
-      const data = await res.json();
-      setTranslateModal({ open: true, text, result: data.translatedText || '', loading: false, error: '' });
     } catch (err) {
-      setTranslateModal({ open: true, text, result: '', loading: false, error: 'Translation failed. Please try again.' });
+      console.error('Translation error:', err);
+      setTranslateModal({
+        open: true,
+        text,
+        result: '',
+        loading: false,
+        error: err.response?.data?.message || 'Translation failed. Please try again later.'
+      });
     }
   }, []);
 
-  // Simple AI stub: returns a constrained response for demo purposes (no API key).
+  // AI handler using real Gemini API
   const handleAi = useCallback(async (contextText) => {
     setAiModal((prev) => ({ ...prev, open: true, context: contextText, result: '', error: '' }));
   }, []);
 
-  const runAiStub = useCallback((context, prompt) => {
+  const runAi = useCallback(async (context, prompt) => {
     if (!prompt?.trim()) {
       setAiModal((prev) => ({ ...prev, error: 'Please enter a question.', loading: false }));
       return;
     }
-    // Constrained, grammar-focused, safe stubbed response
-    const response = [
-      'Here is a concise, grammar-focused explanation:',
-      `Context: ${context.slice(0, 120)}${context.length > 120 ? '...' : ''}`,
-      `Your question: ${prompt}`,
-      'Guidance: Keep sentences simple; ensure subject-verb agreement; use clear examples.',
-      'Example: "I am learning English." -> subject (I) + verb (am) + gerund (learning) + object (English).'
-    ].join('\n');
-    setAiModal((prev) => ({ ...prev, result: response, loading: false, error: '' }));
-  }, []);
 
-  const location = useLocation();
-  const navigate = useNavigate();
+    setAiModal((prev) => ({ ...prev, loading: true, result: '', error: '' }));
 
-  const handleBack = () => {
-    const from = location.state?.from;
-    if (from === 'dashboard') {
-      navigate('/dashboard');
-    } else {
-      navigate('/courses');
+    try {
+      const response = await askLessonAI(context, prompt);
+      setAiModal((prev) => ({ ...prev, result: response.answer, loading: false, error: '' }));
+    } catch (error) {
+      console.error('AI Error:', error);
+      setAiModal((prev) => ({
+        ...prev,
+        loading: false,
+        error: error.response?.data?.message || 'Failed to get AI response. Please try again.'
+      }));
     }
-  };
+  }, []);
 
   if (loading) {
     return (
       <div>
         <Header />
-        <DashboardSkeleton />
+        <div className="loading">Loading course...</div>
       </div>
     );
   }
@@ -139,14 +136,7 @@ const CourseDetailPage = () => {
     <div className="course-detail-page">
       <Header />
       <div className="course-detail-container">
-        <button 
-          onClick={handleBack} 
-          className="back-link" 
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', padding: 0 }}
-        >
-          ← Back
-        </button>
-        
+        <Link to="/dashboard" className="back-link">← Back to Dashboard</Link>
         <div className="course-header">
           <div className="course-icon">{course.image || '📚'}</div>
           <div className="course-header-content">
@@ -157,7 +147,7 @@ const CourseDetailPage = () => {
               <span className="course-lessons-count">{lessons.length} Lessons</span>
             </p>
             <p className="course-description">{course.description}</p>
-            
+
             {course.lessons && course.lessons.length > 0 && (
               <div className="learning-outcomes">
                 <h3>What You'll Learn</h3>
@@ -225,7 +215,7 @@ const CourseDetailPage = () => {
                         <ActionButtons text={section.title} onListen={handleListen} onTranslate={handleTranslate} onAi={handleAi} />
                         <p className="section-content">{section.content}</p>
                         <ActionButtons text={section.content} onListen={handleListen} onTranslate={handleTranslate} onAi={handleAi} />
-                        
+
                         {section.examples && section.examples.length > 0 && (
                           <div className="section-examples">
                             <h4>Examples:</h4>
@@ -345,8 +335,7 @@ const CourseDetailPage = () => {
                 <button
                   className="btn-primary"
                   onClick={() => {
-                    setAiModal((prev) => ({ ...prev, loading: true, result: '', error: '' }));
-                    runAiStub(aiModal.context, aiModal.userPrompt);
+                    runAi(aiModal.context, aiModal.userPrompt);
                   }}
                   disabled={aiModal.loading}
                 >

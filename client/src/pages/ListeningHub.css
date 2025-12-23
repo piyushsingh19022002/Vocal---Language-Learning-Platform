@@ -10,10 +10,11 @@
 
 /* Hero Section */
 .listening-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   padding: 3rem 2rem;
-  color: white;
+  color: var(--color-white);
   text-align: center;
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .listening-hero-container {
@@ -38,8 +39,8 @@
 /* Language Controls Section */
 .language-controls-section {
   padding: 1.5rem 2rem;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--bg-dark-secondary);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .language-controls-container {
@@ -60,8 +61,8 @@
 
 .language-control-label {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #4a5568;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-300);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -73,12 +74,13 @@
 
 .language-select {
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
+  border: 2px solid var(--glass-border);
+  border-radius: var(--radius-md);
   font-size: 0.9375rem;
   font-family: inherit;
-  background: white;
-  color: #1a202c;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  color: var(--color-white);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -96,8 +98,8 @@
 /* Mode Tabs Section */
 .mode-tabs-section {
   padding: 1rem 2rem;
-  background: #f7fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--bg-dark-primary);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .mode-tabs-container {
@@ -126,16 +128,16 @@
 }
 
 .mode-tab.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--gradient-primary);
+  color: var(--color-white);
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 /* Content Section */
 .listening-content-section {
   padding: 2rem;
-  background: #f7fafc;
+  background: var(--bg-dark-primary);
   min-height: 500px;
 }
 
@@ -202,4 +204,3 @@
     padding: 1.5rem 1rem;
   }
 }
-

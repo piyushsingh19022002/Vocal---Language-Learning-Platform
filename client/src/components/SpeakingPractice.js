@@ -66,7 +66,7 @@ export default function Speaking() {
                                 Your Native Language
                             </label>
                             <select 
-                                value={language} 
+                                value={language}
                                 onChange={(e) => setLanguage(e.target.value)}
                                 className="form-select"
                             >
@@ -83,7 +83,7 @@ export default function Speaking() {
                                 Language You Want to Learn
                             </label>
                             <select 
-                                value={learningLanguage} 
+                                value={learningLanguage}
                                 onChange={(e) => setLearningLanguage(e.target.value)}
                                 className="form-select"
                             >
@@ -100,6 +100,7 @@ export default function Speaking() {
                                 <Languagecode 
                                     language={learningLanguage} 
                                     onCodeChange={(code) => setLanguageCode(code)} 
+                                />
                                 />
                             </div>
                         )}

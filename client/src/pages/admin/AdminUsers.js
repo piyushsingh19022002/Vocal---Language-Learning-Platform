@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import AdminTable from '../../components/admin/AdminTable';
-import { 
-  getAdminUsers, 
-  setUserBlocked, 
+import {
+  getAdminUsers,
+  setUserBlocked,
   deleteUser,
   getAdminCourses,
   assignCourseToUser,
@@ -41,6 +41,7 @@ const AdminUsers = ({ showToast }) => {
   useEffect(() => {
     loadUsers();
     loadCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleBlockToggle = async (user) => {
@@ -107,11 +108,11 @@ const AdminUsers = ({ showToast }) => {
       // DEBUG LOG
       console.log('Fetching courses for user:', userId);
       console.log('API call will be: GET /api/admin/users/' + userId + '/courses');
-      
+
       const userCoursesData = await getUserCourses(userId);
-      
+
       console.log('Courses data received:', userCoursesData);
-      
+
       setCourseManager({
         userId: userId,
         userName: user.name || user.email,
@@ -122,12 +123,12 @@ const AdminUsers = ({ showToast }) => {
       console.error('Error response:', err.response);
       console.error('Error status:', err.response?.status);
       console.error('Error data:', err.response?.data);
-      
-      const errorMessage = err.response?.data?.message || 
+
+      const errorMessage = err.response?.data?.message ||
         (err.response?.status === 404 ? 'Route not found. Please check server configuration.' :
-         err.response?.status === 403 ? 'Admin access required' :
-         err.response?.status === 500 ? 'Server error. Please try again later.' :
-         'Failed to load user courses');
+          err.response?.status === 403 ? 'Admin access required' :
+            err.response?.status === 500 ? 'Server error. Please try again later.' :
+              'Failed to load user courses');
       showToast?.(errorMessage, 'error');
     }
   };
@@ -190,10 +191,6 @@ const AdminUsers = ({ showToast }) => {
     },
   ];
 
-  const normalizedActions = actions.map((action) => ({
-    ...action,
-    label: typeof action.label === 'function' ? undefined : action.label,
-  }));
 
   if (loading) {
     return <div className="admin-loading">Loading users...</div>;
@@ -287,9 +284,9 @@ const AdminUsers = ({ showToast }) => {
                         </div>
                         <button
                           className={`admin-btn ${isEnrolled ? 'admin-btn-danger' : 'admin-btn-primary'}`}
-                          onClick={() => 
-                            isEnrolled 
-                              ? handleRevokeCourse(course._id) 
+                          onClick={() =>
+                            isEnrolled
+                              ? handleRevokeCourse(course._id)
                               : handleAssignCourse(course._id)
                           }
                           style={{ minWidth: '120px' }}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { getCurrentUser, getCourses, getProgress } from '../utils/api';
 import DashboardSkeleton from './dashboard/DashboardSkeleton';
-
+import GamificationDashboard from './gamification/GamificationDashboard';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -140,7 +140,7 @@ const Dashboard = () => {
               {/* Summary View (Always Visible) */}
               <div className="progress-summary">
                 <p>Vocabulary: {learnedWords}/{totalWords} words</p>
-                <p style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: '#14b8a6', fontWeight: '600' }}>
+                <p style={{ marginTop: '0.5rem', fontSize: '0.875rem', fontWeight: '600' }} className="progress-text">
                   Progress: {fluency}%
                 </p>
               </div>
@@ -236,26 +236,8 @@ const Dashboard = () => {
         </div>
 
 
-        {/* Activity Section */}
-
-
-
-        <div className="activity-section">
-          <div className="activity-card">
-            <div className="progress-circle">
-              <div className="progress-value">{fluency}%</div>
-              <div className="progress-label">Fluency</div>
-            </div>
-            <div className="activity-content">
-              <h3>Weekly Activity</h3>
-              <p>
-                Great job this week, {user?.name || 'User'}! You've practiced
-                for {practiceTime} minutes. Keep up the momentum.
-              </p>
-              <button className="btn-report">View Detailed Report</button>
-            </div>
-          </div>
-        </div>
+        {/* Gamification Dashboard */}
+        <GamificationDashboard onViewReport={() => {}} />
 
         {/* Courses Section */}
         <div className="courses-section">

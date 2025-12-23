@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { getListeningLessons, getCurrentUser } from '../utils/api';
+import { getListeningLessons, getCurrentUser, awardXP } from '../utils/api';
 import GuidedLessonsPanel from '../components/listening/GuidedLessonsPanel';
 import TTSPracticePanel from '../components/listening/TTSPracticePanel';
 import DailyStatsStrip from '../components/listening/DailyStatsStrip';
@@ -27,15 +27,15 @@ const ListeningHub = () => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  
+
   // Language selectors (independent)
   const [textLanguage, setTextLanguage] = useState('en-US');
   const [listeningLanguage, setListeningLanguage] = useState('en-US');
-  
+
   // Mode: 'guided' or 'practice'
   const [activeMode, setActiveMode] = useState('guided');
   const [showLangModal, setShowLangModal] = useState(false);
-  
+
   // Daily stats
   const [dailyStats, setDailyStats] = useState({
     listeningTime: 0, // minutes
@@ -52,7 +52,7 @@ const ListeningHub = () => {
         ]);
         setLessons(lessonsData);
         setUser(userData);
-        
+
         // Load daily stats from localStorage (client-side tracking)
         const today = new Date().toDateString();
         const storedStats = localStorage.getItem(`listeningStats_${today}`);
@@ -112,7 +112,7 @@ const ListeningHub = () => {
                 Text Language
               </label>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                 <select
+                <select
                   className="language-select"
                   value={textLanguage}
                   onChange={(e) => setTextLanguage(e.target.value)}
@@ -123,7 +123,7 @@ const ListeningHub = () => {
                     </option>
                   ))}
                 </select>
-                <button 
+                <button
                   onClick={() => setShowLangModal(true)}
                   style={{
                     padding: '8px 12px',
@@ -209,11 +209,23 @@ const ListeningHub = () => {
                   lessons={lessons}
                   listeningLanguage={listeningLanguage}
                   user={user}
-                  onLessonComplete={(lessonId, duration) => {
+                  onLessonComplete={async (lessonId, duration) => {
                     updateDailyStats({
                       lessonsCompleted: dailyStats.lessonsCompleted + 1,
                       listeningTime: dailyStats.listeningTime + Math.round(duration / 60),
                     });
+
+                    // Track gamification activity
+                    try {
+                      await awardXP({
+                        activityType: 'listening',
+                        duration: Math.round(duration / 60),
+                        completed: true,
+                        accuracy: 100
+                      });
+                    } catch (error) {
+                      console.error('Error tracking listening activity:', error);
+                    }
                   }}
                 />
               </div>
@@ -223,10 +235,21 @@ const ListeningHub = () => {
                   textLanguage={textLanguage}
                   listeningLanguage={listeningLanguage}
                   user={user}
-                  onPracticeComplete={() => {
+                  onPracticeComplete={async (duration = 60) => {
                     updateDailyStats({
                       practicesCompleted: dailyStats.practicesCompleted + 1,
                     });
+
+                    // Track gamification activity
+                    try {
+                      await awardXP({
+                        activityType: 'listening',
+                        duration: Math.round(duration / 60),
+                        completed: true
+                      });
+                    } catch (error) {
+                      console.error('Error tracking practice activity:', error);
+                    }
                   }}
                 />
               </div>

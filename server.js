@@ -24,13 +24,15 @@ app.use('/api/lessons', require('./routes/lessons'));
 app.use('/api/vocabulary', require('./routes/vocabulary'));
 app.use('/api/progress', require('./routes/progress'));
 
-app.use('/api/question',require('./utils/question'));
-app.use('/api/save',require('./utils/scoreDB'));
+app.use('/api/question', require('./utils/question'));
+app.use('/api/save', require('./utils/scoreDB'));
 
 app.use('/api/listening', require('./routes/listening'));
 app.use('/api/translate', require('./routes/translate'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/activity', require('./routes/activity'));
+app.use('/api/gamification', require('./routes/gamification'));
 
 // Health check
 app.get('/api/health', (req, res) => {

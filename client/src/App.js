@@ -8,7 +8,6 @@ import VocabularyPage from './pages/VocabularyPage';
 
 import ListeningHub from './pages/ListeningHub';
 
-import LanguageSelector from './components/LanguageSelector';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import CoursesPage from './pages/CoursesPage';
@@ -40,8 +39,8 @@ function App() {
 
 
 
-        <Route path="/dashboard/speaking" element={<Speaking/>}></Route>
-        <Route path="/audio" element={<GlobalProvider/>}></Route>
+        <Route path="/dashboard/speaking" element={<Speaking />}></Route>
+        <Route path="/audio" element={<GlobalProvider />}></Route>
 
 
         <Route path="/dashboard/speaking/level/:id" element={<Level1></Level1>}></Route>
@@ -55,7 +54,7 @@ function App() {
 
         <Route path="/contact" element={<Contact />} />
 
-         contactUs
+
 
         <Route path="/about" element={<About />} />
 

@@ -17,7 +17,7 @@ const Login = ({ isLogin = true }) => {
   // Load Google Identity Services
   useEffect(() => {
     const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-    
+
     if (!clientId) {
       console.warn('Google Client ID is not configured. Google sign-in will not work.');
       return;
@@ -32,9 +32,8 @@ const Login = ({ isLogin = true }) => {
       if (window.google && window.google.accounts) {
         window.google.accounts.id.initialize({
           client_id: clientId,
-          callback: (response) => {
-            handleGoogleSignIn(response);
-          },
+          callback: handleGoogleSignIn,
+          auto_select: false,
         });
       }
     };
@@ -48,36 +47,35 @@ const Login = ({ isLogin = true }) => {
       }
     };
 
-
-
-
-
   }, []);
 
   const handleGoogleSignIn = async (response) => {
     try {
       setGoogleLoading(true);
       setError('');
-      
-      // If response has credential (ID token flow)
-      if (response.credential) {
-        await loginWithGoogle(response.credential);
-        navigate('/dashboard');
-        window.location.reload();
+
+      if (!response.credential) {
+        throw new Error('No credential received from Google');
       }
-      // Otherwise, userInfo is handled in handleGoogleClick
+
+      const result = await loginWithGoogle(response.credential);
+
+      // Token is already stored by loginWithGoogle
+      navigate('/dashboard');
+      window.location.reload();
     } catch (err) {
       console.error('Google sign in error:', err);
-      setError(err.response?.data?.message || 'Google sign in failed. Please try again.');
+      setError(err.response?.data?.message || err.message || 'Google sign in failed. Please try again.');
+    } finally {
       setGoogleLoading(false);
     }
   };
 
   const handleGoogleClick = () => {
     const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-    
+
     if (!clientId) {
-      setError('Google Client ID is not configured. Please check GOOGLE_SETUP.md for instructions.');
+      setError('Google Client ID is not configured. Please contact support.');
       return;
     }
 
@@ -87,38 +85,21 @@ const Login = ({ isLogin = true }) => {
     }
 
     try {
-      // Use Google's One Tap or popup flow
-      window.google.accounts.oauth2.initTokenClient({
-        client_id: clientId,
-        scope: 'email profile',
-        callback: async (tokenResponse) => {
-          if (tokenResponse.error) {
-            setError('Google sign in failed: ' + tokenResponse.error);
-            return;
-          }
-          
-          // Get user info using the access token
-          try {
-            const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-              headers: {
-                Authorization: `Bearer ${tokenResponse.access_token}`
-              }
-            });
-            const userInfo = await userInfoResponse.json();
-            
-            // Send user info directly to backend
-            setGoogleLoading(true);
-            setError('');
-            await loginWithGoogle(null, userInfo);
-            navigate('/dashboard');
-            window.location.reload(); // Refresh to update user state
-          } catch (err) {
-            console.error('Error fetching user info:', err);
-            setError('Failed to get user information from Google.');
-            setGoogleLoading(false);
-          }
-        },
-      }).requestAccessToken();
+      // Trigger Google One Tap prompt
+      window.google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // Fallback: show account chooser
+          window.google.accounts.id.renderButton(
+            document.getElementById('google-button-fallback'),
+            {
+              theme: 'outline',
+              size: 'large',
+              text: 'continue_with',
+              width: 300
+            }
+          );
+        }
+      });
     } catch (error) {
       console.error('Error triggering Google sign-in:', error);
       setError('Failed to start Google sign-in. Please try again.');
@@ -141,7 +122,7 @@ const Login = ({ isLogin = true }) => {
       if (isLogin) {
         await login({ email: formData.email, password: formData.password });
 
-        
+
 
         navigate('/dashboard');
 
@@ -223,15 +204,18 @@ const Login = ({ isLogin = true }) => {
             {loading ? 'Loading...' : 'Continue'}
           </button>
 
-          <button 
-            type="button" 
-            className="btn-google" 
+          <button
+            type="button"
+            className="btn-google"
             onClick={handleGoogleClick}
             disabled={googleLoading || loading}
           >
             <span className="google-icon">G</span>
             {googleLoading ? 'Signing in...' : 'Continue with Google'}
           </button>
+
+          {/* Fallback container for Google-rendered button */}
+          <div id="google-button-fallback" style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'center' }}></div>
         </form>
 
         <p className="signup-link">

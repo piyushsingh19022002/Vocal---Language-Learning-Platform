@@ -5,6 +5,10 @@ import {
   createAdminCourse,
   updateAdminCourse,
   deleteAdminCourse,
+  getLessonsByCourse,
+  createLesson,
+  updateLesson,
+  deleteLesson,
 } from '../../utils/api';
 import './Admin.css';
 
@@ -15,6 +19,15 @@ const emptyCourse = {
   level: 'Beginner',
   type: 'mixed',
   status: 'active',
+  image: '📚',
+};
+
+const emptyLesson = {
+  title: '',
+  type: 'Listening',
+  description: '',
+  content: '',
+  order: 1,
 };
 
 const AdminCourses = ({ showToast }) => {
@@ -23,6 +36,13 @@ const AdminCourses = ({ showToast }) => {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyCourse);
   const [confirm, setConfirm] = useState(null);
+
+  // Lesson management state
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [lessons, setLessons] = useState([]);
+  const [editingLesson, setEditingLesson] = useState(null);
+  const [lessonForm, setLessonForm] = useState(emptyLesson);
+  const [showLessonForm, setShowLessonForm] = useState(false);
 
   const loadCourses = async () => {
     try {
@@ -77,6 +97,7 @@ const AdminCourses = ({ showToast }) => {
       level: course.level || 'Beginner',
       type: course.type || 'mixed',
       status: course.status || 'active',
+      image: course.image || '📚',
     });
   };
 
@@ -101,6 +122,78 @@ const AdminCourses = ({ showToast }) => {
     }
   };
 
+  // Lesson management functions
+  const loadLessons = async (courseId) => {
+    try {
+      const data = await getLessonsByCourse(courseId);
+      setLessons(data);
+    } catch (err) {
+      showToast?.(err.response?.data?.message || 'Failed to load lessons', 'error');
+    }
+  };
+
+  const handleManageLessons = (course) => {
+    setSelectedCourse(course);
+    loadLessons(course._id);
+    setShowLessonForm(false);
+  };
+
+  const handleLessonChange = (e) => {
+    const { name, value } = e.target;
+    setLessonForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLessonSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingLesson) {
+        const updated = await updateLesson(editingLesson._id, lessonForm);
+        setLessons((prev) => prev.map((l) => (l._id === updated._id ? updated : l)));
+        showToast?.('Lesson updated successfully', 'success');
+      } else {
+        const created = await createLesson({ ...lessonForm, course: selectedCourse._id });
+        setLessons((prev) => [...prev, created]);
+        showToast?.('Lesson created successfully', 'success');
+      }
+      setLessonForm(emptyLesson);
+      setEditingLesson(null);
+      setShowLessonForm(false);
+    } catch (err) {
+      showToast?.(err.response?.data?.message || 'Failed to save lesson', 'error');
+    }
+  };
+
+  const handleEditLesson = (lesson) => {
+    setEditingLesson(lesson);
+    setLessonForm({
+      title: lesson.title || '',
+      type: lesson.type || 'Listening',
+      description: lesson.description || '',
+      content: lesson.content || '',
+      order: lesson.order || 1,
+    });
+    setShowLessonForm(true);
+  };
+
+  const handleDeleteLesson = async (lesson) => {
+    if (!window.confirm(`Are you sure you want to delete lesson "${lesson.title}"?`)) return;
+    try {
+      await deleteLesson(lesson._id);
+      setLessons((prev) => prev.filter((l) => l._id !== lesson._id));
+      showToast?.('Lesson deleted successfully', 'success');
+    } catch (err) {
+      showToast?.(err.response?.data?.message || 'Failed to delete lesson', 'error');
+    }
+  };
+
+  const closeLessonManager = () => {
+    setSelectedCourse(null);
+    setLessons([]);
+    setShowLessonForm(false);
+    setEditingLesson(null);
+    setLessonForm(emptyLesson);
+  };
+
   const columns = [
     { key: 'name', label: 'Title' },
     { key: 'language', label: 'Language' },
@@ -120,12 +213,18 @@ const AdminCourses = ({ showToast }) => {
         value === 'coming_soon'
           ? 'Coming Soon'
           : value === 'draft'
-          ? 'Draft'
-          : 'Active',
+            ? 'Draft'
+            : 'Active',
     },
   ];
 
   const actions = [
+    {
+      label: 'Manage Lessons',
+      variant: 'primary',
+      onClick: (row) => handleManageLessons(row),
+      icon: '📚',
+    },
     {
       label: 'Edit',
       variant: 'secondary',
@@ -174,6 +273,17 @@ const AdminCourses = ({ showToast }) => {
                 required
               />
             </div>
+          </div>
+
+          <div className="admin-form-group">
+            <label>Image/Emoji</label>
+            <input
+              type="text"
+              name="image"
+              value={form.image}
+              onChange={handleChange}
+              placeholder="Enter emoji or image URL (e.g., 📚, 🇬🇧)"
+            />
           </div>
 
           <div className="admin-form-group">
@@ -235,6 +345,188 @@ const AdminCourses = ({ showToast }) => {
 
       <AdminTable columns={columns} data={courses} actions={actions} />
 
+      {/* Lesson Management Modal */}
+      {selectedCourse && (
+        <div className="admin-modal-backdrop">
+          <div className="admin-modal" style={{ maxWidth: '900px', maxHeight: '90vh', overflow: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 className="admin-modal-title">
+                Manage Lessons: {selectedCourse.name}
+              </h2>
+              <button
+                className="admin-btn admin-btn-ghost"
+                onClick={closeLessonManager}
+                style={{ padding: '0.5rem 1rem' }}
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            {!showLessonForm && (
+              <button
+                className="admin-btn admin-btn-primary"
+                onClick={() => setShowLessonForm(true)}
+                style={{ marginBottom: '1rem' }}
+              >
+                + Add Lesson
+              </button>
+            )}
+
+            {showLessonForm && (
+              <div className="admin-card" style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ marginBottom: '1rem' }}>
+                  {editingLesson ? 'Edit Lesson' : 'Add New Lesson'}
+                </h3>
+                <form onSubmit={handleLessonSubmit}>
+                  <div className="admin-form-row">
+                    <div className="admin-form-group">
+                      <label>Title *</label>
+                      <input
+                        type="text"
+                        name="title"
+                        value={lessonForm.title}
+                        onChange={handleLessonChange}
+                        required
+                      />
+                    </div>
+                    <div className="admin-form-group">
+                      <label>Type *</label>
+                      <select
+                        name="type"
+                        value={lessonForm.type}
+                        onChange={handleLessonChange}
+                        required
+                      >
+                        <option value="Listening">Listening</option>
+                        <option value="Speaking">Speaking</option>
+                        <option value="Reading">Reading</option>
+                        <option value="Writing">Writing</option>
+                        <option value="Vocabulary">Vocabulary</option>
+                      </select>
+                    </div>
+                    <div className="admin-form-group">
+                      <label>Order</label>
+                      <input
+                        type="number"
+                        name="order"
+                        value={lessonForm.order}
+                        onChange={handleLessonChange}
+                        min="1"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="admin-form-group">
+                    <label>Description</label>
+                    <textarea
+                      name="description"
+                      value={lessonForm.description}
+                      onChange={handleLessonChange}
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="admin-form-group">
+                    <label>Content</label>
+                    <textarea
+                      name="content"
+                      value={lessonForm.content}
+                      onChange={handleLessonChange}
+                      rows={4}
+                      placeholder="Enter lesson content here..."
+                    />
+                  </div>
+
+                  <div className="admin-form-actions">
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn-ghost"
+                      onClick={() => {
+                        setShowLessonForm(false);
+                        setEditingLesson(null);
+                        setLessonForm(emptyLesson);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" className="admin-btn admin-btn-primary">
+                      {editingLesson ? 'Update Lesson' : 'Add Lesson'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="admin-card">
+              <h3 style={{ marginBottom: '1rem' }}>
+                Lessons ({lessons.length})
+              </h3>
+              {lessons.length === 0 ? (
+                <p style={{ color: '#718096', textAlign: 'center', padding: '2rem' }}>
+                  No lessons yet. Click "Add Lesson" to create one.
+                </p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {lessons.sort((a, b) => a.order - b.order).map((lesson) => (
+                    <div
+                      key={lesson._id}
+                      style={{
+                        padding: '1rem',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                          <span style={{ fontWeight: '600', color: '#667eea' }}>
+                            #{lesson.order}
+                          </span>
+                          <h4 style={{ margin: 0, fontSize: '1rem' }}>{lesson.title}</h4>
+                          <span
+                            style={{
+                              fontSize: '0.75rem',
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: '4px',
+                              background: '#edf2f7',
+                              color: '#4a5568',
+                            }}
+                          >
+                            {lesson.type}
+                          </span>
+                        </div>
+                        {lesson.description && (
+                          <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.875rem', color: '#718096' }}>
+                            {lesson.description}
+                          </p>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                          className="admin-btn admin-btn-secondary"
+                          onClick={() => handleEditLesson(lesson)}
+                          style={{ padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          className="admin-btn admin-btn-danger"
+                          onClick={() => handleDeleteLesson(lesson)}
+                          style={{ padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
+                        >
+                          🗑 Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       {confirm && (
         <div className="admin-modal-backdrop">
           <div className="admin-modal">

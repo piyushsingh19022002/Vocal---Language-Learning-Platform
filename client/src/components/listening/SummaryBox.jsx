@@ -11,8 +11,8 @@ const SummaryBox = ({ summary }) => (
       animation: 'fadeIn 220ms ease',
     }}
   >
-    <div style={{ fontWeight: 800, marginBottom: '6px', color: '#0f172a' }}>Summary</div>
-    <div style={{ color: '#1f2937', lineHeight: 1.6 }}>{summary}</div>
+    <div style={{ fontWeight: 800, marginBottom: '6px' }} className="text-primary">Summary</div>
+    <div style={{ lineHeight: 1.6 }} className="text-secondary">{summary}</div>
   </div>
 );
 

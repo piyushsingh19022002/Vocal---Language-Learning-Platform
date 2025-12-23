@@ -97,7 +97,7 @@ const LanguageSelector = ({ onSelect }) => {
             >
               {lang.flag}
             </div>
-            <div style={{ fontWeight: 700, color: '#0f172a' }}>{lang.label}</div>
+            <div style={{ fontWeight: 700 }} className="text-primary">{lang.label}</div>
           </button>
         ))}
       </div>
