@@ -231,72 +231,55 @@ router.post('/login', async (req, res) => {
 // @route   POST /api/auth/google
 // @desc    Authenticate user with Google
 // @access  Public
+// @route   POST /api/auth/google
+// @desc    Authenticate user with Google
+// @access  Public
 router.post('/google', async (req, res) => {
   try {
-    const { tokenId, userInfo } = req.body;
-
-    if (!tokenId && !userInfo) {
-      return res.status(400).json({ message: 'Google token or user info is required' });
+    const { tokenId } = req.body;
+    
+    if (!tokenId) {
+      return res.status(400).json({ message: 'Google token is required' });
     }
 
-    let email, name, picture, googleId;
-
-    if (userInfo) {
-      // Direct user info from access token
-      email = userInfo.email;
-      name = userInfo.name;
-      picture = userInfo.picture;
-      googleId = userInfo.id || userInfo.sub;
-    } else {
-      // Decode JWT token (for ID token flow)
-      const jwt = require('jsonwebtoken');
-      let decoded;
-      try {
-        decoded = jwt.decode(tokenId);
-      } catch (error) {
-        return res.status(400).json({ message: 'Invalid Google token' });
-      }
-
-      if (!decoded || !decoded.email) {
-        return res.status(400).json({ message: 'Invalid token data' });
-      }
-
-      email = decoded.email;
-      name = decoded.name;
-      picture = decoded.picture;
-      googleId = decoded.sub || decoded.id;
-    }
+    const { OAuth2Client } = require('google-auth-library');
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    
+    // Verify the token
+    const ticket = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub: googleId } = payload;
 
     if (!email) {
-      return res.status(400).json({ message: 'Email is required' });
+      return res.status(400).json({ message: 'Email not found in Google token' });
     }
 
     // Check if user exists
-    let user = await User.findOne({
-      $or: [
-        { email },
-        { googleId }
-      ]
-    });
+    let user = await User.findOne({ email });
 
     if (user) {
-      // Update user if they logged in with Google before
+      // If user exists, update/link Google ID if missing
       if (!user.googleId) {
         user.googleId = googleId;
-        user.authProvider = 'google';
-        if (picture) user.avatar = picture;
+        user.authProvider = user.authProvider === 'local' ? 'both' : 'google';
+        if (picture && !user.avatar) user.avatar = picture;
+        user.isVerified = true; // Google users are verified
         await user.save();
       }
     } else {
-      // Create new user (Google users are auto-verified)
+      // Create new user
       user = await User.create({
-        name: (name && name.trim()) || email.split('@')[0] || 'User',
+        name: name || email.split('@')[0],
         email,
         googleId,
-        avatar: picture || '',
+        avatar: picture,
         authProvider: 'google',
-        password: undefined, // No password for Google users
-        isVerified: true, // Google users are auto-verified
+        isVerified: true,
+        password: undefined // No password for Google-only users
       });
     }
 
@@ -304,18 +287,15 @@ router.post('/google', async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar,
+      role: user.role,
       token: generateToken(user._id),
     });
+
   } catch (error) {
     console.error('Google auth error:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
-    });
-    res.status(500).json({
-      message: error.message || 'Google authentication failed'
+    res.status(401).json({ 
+      message: 'Google authentication failed', 
+      error: error.message 
     });
   }
 });
